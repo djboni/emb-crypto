@@ -1,0 +1,15 @@
+# python
+__pycache__/
+*.pyc
+
+# vim
+*.swp
+
+# compilation
+*_.c
+*.o
+*.so
+
+# gcov
+*.gcno
+*.gcda
