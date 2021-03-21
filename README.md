@@ -6,6 +6,11 @@ by [Djones A. Boni](https://github.com/djboni)
   * AES-ECB
   * AES-CBC
   * AES-Hash
+* SHA-3 / Keccak
+  * Hash (SHA-3)
+  * XOF (SHAKE)
+  * PRNG
+  * Authenticated encryption
 * Unit-tests with Python
 
 ## How to run the tests
