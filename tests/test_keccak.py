@@ -20,10 +20,13 @@ import unittest
 import os
 import random
 
+# Dicrionaries to hold modules and ffis
 module, ffi = {}, {}
 
+# Compile several modules with hash lengths
 for HASH_BITS in (512, 384, 256, 224):
 
+  # Every module have its own name
   module_name = 'keccak_%d_' % HASH_BITS
 
   source_files = [
@@ -35,6 +38,7 @@ for HASH_BITS in (512, 384, 256, 224):
     '../include',
   ]
 
+  # Each module has one hash length of XOF security
   compiler_options = [
     '-std=c90',
     '-pedantic',
@@ -49,17 +53,23 @@ for HASH_BITS in (512, 384, 256, 224):
 
 import hashlib
 
+# Used to select the correct reference functions
 sha3 = {
   512: hashlib.sha3_512,
   384: hashlib.sha3_384,
   256: hashlib.sha3_256,
   224: hashlib.sha3_224
 }
-shake = { 512: hashlib.shake_256, 256: hashlib.shake_128 }
+shake = {
+  512: hashlib.shake_256,
+  256: hashlib.shake_128
+}
 
 class TestSHA3(unittest.TestCase):
 
   def testSHA3Empty(self):
+    # Test all the modules
+    # SHA3-512, SHA3-384, SHA3-256, SHA3-224
     for HASH_BITS in (512, 384, 256, 224):
       length = 0
       data = b'\x00' * length
@@ -142,6 +152,8 @@ class TestSHA3(unittest.TestCase):
 class TestSHAKE(unittest.TestCase):
 
   def testSHAKEEmpty(self):
+    # Test the modules
+    # SHAKE-256, SHAKE-128
     for HASH_BITS in (512, 256):
       length = 0
       data = b'\x00' * length

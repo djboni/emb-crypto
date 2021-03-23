@@ -21,10 +21,13 @@ import os
 
 AES_BLOCK_LEN = 16
 
+# Dicrionaries to hold modules and ffis
 module, ffi = {}, {}
 
+# Compile several modules with different key length
 for AES_KEY_LEN in (16, 24, 32):
 
+  # Every module have its own name
   module_name = 'aes_%d_' % AES_KEY_LEN
 
   source_files = [
@@ -35,6 +38,7 @@ for AES_KEY_LEN in (16, 24, 32):
     '../include',
   ]
 
+  # Each module has one key length
   compiler_options = [
     '-std=c90',
     '-pedantic',
@@ -50,6 +54,8 @@ from Crypto.Cipher import AES
 class TestECBEncrypt(unittest.TestCase):
 
   def testECBEncryptZeros(self):
+    # Test all the modules
+    # AES-128, AES-192, AES-256
     for AES_KEY_LEN in (16, 24, 32):
       key = b'\x00' * AES_KEY_LEN
       plain = b'\x00' * AES_BLOCK_LEN
@@ -57,6 +63,8 @@ class TestECBEncrypt(unittest.TestCase):
       cipher_module = b'\x00' * AES_BLOCK_LEN
       module[AES_KEY_LEN].aes_ecb_encrypt(key, plain, cipher_module)
 
+      # The correct implementation is automatically selected with by the
+      # key length
       cipher_reference = AES.new(key, AES.MODE_ECB).encrypt(plain)
 
       self.assertEqual(cipher_module, cipher_reference)
