@@ -141,7 +141,7 @@ class TestSHA3(unittest.TestCase):
 
 class TestSHAKE(unittest.TestCase):
 
-  def testSHA3Empty(self):
+  def testSHAKEEmpty(self):
     for HASH_BITS in (512, 256):
       length = 0
       data = b'\x00' * length
@@ -160,7 +160,7 @@ class TestSHAKE(unittest.TestCase):
 
       self.assertEqual(xof_module, xof_reference)
 
-  def testSHA3Zero(self):
+  def testSHAKEZero(self):
     for HASH_BITS in (512, 256):
       length = 1
       data = b'\x00' * length
@@ -179,7 +179,7 @@ class TestSHAKE(unittest.TestCase):
 
       self.assertEqual(xof_module, xof_reference)
 
-  def testSHA3Zeros(self):
+  def testSHAKEZeros(self):
     for HASH_BITS in (512, 256):
       length = random.randint(0, 1024)
       data = b'\x00' * length
@@ -198,7 +198,7 @@ class TestSHAKE(unittest.TestCase):
 
       self.assertEqual(xof_module, xof_reference)
 
-  def testSHA3Random(self):
+  def testSHAKERandom(self):
     for HASH_BITS in (512, 256):
       length = random.randint(0, 1024)
       data = os.urandom(length)

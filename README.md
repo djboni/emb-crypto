@@ -6,8 +6,9 @@ by [Djones A. Boni](https://github.com/djboni)
   * AES-ECB
   * AES-CBC
   * AES-Hash
+* SHA-1
 * SHA-3 / Keccak
-  * Hash (SHA-3)
+  * HASH (SHA-3)
   * XOF (SHAKE)
   * PRNG
   * Authenticated encryption
