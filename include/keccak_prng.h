@@ -46,7 +46,7 @@ void KECCAK_PRNG_seed(const void *buff, uint8_t num);
 void KECCAK_PRNG_random(void *buff, uint8_t num);
 
 #ifdef KECCAK_PRNG_DEBUG
-extern KECCAK_t KECCAK_PRNG_entropy __attribute__((section(".noinit")));
+extern struct KECCAK_t KECCAK_PRNG_entropy __attribute__((section(".noinit")));
 #endif
 
 #ifdef __cplusplus

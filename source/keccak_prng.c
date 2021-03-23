@@ -53,9 +53,9 @@
  */
 
 #if defined(KECCAK_PRNG_DEBUG) && KECCAK_PRNG_DEBUG == 1
-KECCAK_t KECCAK_PRNG_entropy __attribute__((section(".noinit")));
+struct KECCAK_t KECCAK_PRNG_entropy __attribute__((section(".noinit")));
 #else
-static KECCAK_t KECCAK_PRNG_entropy __attribute__((section(".noinit")));
+static struct KECCAK_t KECCAK_PRNG_entropy __attribute__((section(".noinit")));
 #endif
 
 void KECCAK_PRNG_seed(const void *buff, uint8_t num) {

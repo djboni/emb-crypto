@@ -77,7 +77,7 @@ extern "C" {
 /* HASH (Based on SHA3) */
 
 typedef struct KECCAK_HASH_t {
-  KECCAK_t state;
+  struct KECCAK_t state;
 } KECCAK_HASH_t;
 
 void KECCAK_HASH_init(KECCAK_HASH_t *hash);
@@ -87,7 +87,7 @@ void KECCAK_HASH_finish(KECCAK_HASH_t *hash);
 /* XOF (Based on SHAKE) */
 
 typedef struct KECCAK_XOF_t {
-  KECCAK_t state;
+  struct KECCAK_t state;
 } KECCAK_XOF_t;
 
 void KECCAK_XOF_init(KECCAK_XOF_t *xof);

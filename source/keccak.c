@@ -20,7 +20,7 @@
 
 typedef void (*function_process_data)(uint8_t *state, uint8_t *buff);
 
-void KECCAK_init(KECCAK_t *state) {
+void KECCAK_init(struct KECCAK_t *state) {
   uint8_t *A = (uint8_t *)&state->A[0], i;
   for (i = 0; i < sizeof(*state); i++) {
     A[i] = 0;
@@ -31,13 +31,13 @@ static void function_absorb(uint8_t *state, const uint8_t *buff) {
   *state ^= *buff;
 }
 
-void KECCAK_absorb(KECCAK_t *state, uint8_t rate, uint8_t rounds,
+void KECCAK_absorb(struct KECCAK_t *state, uint8_t rate, uint8_t rounds,
                    const void *buff, uint16_t num) {
   KECCAK_process_data(state, rate, rounds, (uint8_t *)buff, num,
                       (function_process_data)function_absorb);
 }
 
-void KECCAK_finish(KECCAK_t *state, uint8_t rate, uint8_t rounds,
+void KECCAK_finish(struct KECCAK_t *state, uint8_t rate, uint8_t rounds,
                    uint8_t pad_byte) {
   uint8_t *A = (uint8_t *)&state->A[0];
 
@@ -52,8 +52,8 @@ static void function_squeeze(const uint8_t *state, uint8_t *buff) {
   *buff = *state;
 }
 
-void KECCAK_squeeze(KECCAK_t *state, uint8_t rate, uint8_t rounds, void *buff,
-                    uint16_t num) {
+void KECCAK_squeeze(struct KECCAK_t *state, uint8_t rate, uint8_t rounds,
+                    void *buff, uint16_t num) {
   KECCAK_process_data(state, rate, rounds, buff, num,
                       (function_process_data)function_squeeze);
 }
@@ -64,8 +64,8 @@ static void function_encrypt(uint8_t *state, uint8_t *buff) {
   *buff = encrypted;
 }
 
-void KECCAK_encrypt(KECCAK_t *state, uint8_t rate, uint8_t rounds, void *buff,
-                    uint16_t num) {
+void KECCAK_encrypt(struct KECCAK_t *state, uint8_t rate, uint8_t rounds,
+                    void *buff, uint16_t num) {
   KECCAK_process_data(state, rate, rounds, buff, num, function_encrypt);
 }
 
@@ -75,12 +75,12 @@ static void function_decrypt(uint8_t *state, uint8_t *buff) {
   *buff = decrypted;
 }
 
-void KECCAK_decrypt(KECCAK_t *state, uint8_t rate, uint8_t rounds, void *buff,
-                    uint16_t num) {
+void KECCAK_decrypt(struct KECCAK_t *state, uint8_t rate, uint8_t rounds,
+                    void *buff, uint16_t num) {
   KECCAK_process_data(state, rate, rounds, buff, num, function_decrypt);
 }
 
-void KECCAK_process_data(KECCAK_t *state, uint8_t rate, uint8_t rounds,
+void KECCAK_process_data(struct KECCAK_t *state, uint8_t rate, uint8_t rounds,
                          void *buff, uint16_t num,
                          void (*function)(uint8_t *state, uint8_t *buff)) {
   uint8_t statenum = state->num;
@@ -100,9 +100,9 @@ void KECCAK_process_data(KECCAK_t *state, uint8_t rate, uint8_t rounds,
   state->num = statenum;
 }
 
-static void KECCAK_f_round(KECCAK_t *state, uint8_t round);
+static void KECCAK_f_round(struct KECCAK_t *state, uint8_t round);
 
-void KECCAK_f(KECCAK_t *state, uint8_t rounds) {
+void KECCAK_f(struct KECCAK_t *state, uint8_t rounds) {
   uint8_t i;
   for (i = KECCAK_NR - rounds; i < KECCAK_NR; ++i)
     KECCAK_f_round(state, i);
@@ -258,7 +258,7 @@ static KECCAK_uint rot(KECCAK_uint x, uint8_t n) {
 #endif
 }
 
-static void KECCAK_f_round(KECCAK_t *state, uint8_t round) {
+static void KECCAK_f_round(struct KECCAK_t *state, uint8_t round) {
   uint8_t i, im1, ip1, jt5;
   KECCAK_uint B[25], C[5], D;
 

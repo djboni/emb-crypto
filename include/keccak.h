@@ -23,11 +23,8 @@
 extern "C" {
 #endif
 
+#include "keccak_types.h"
 #include <stdint.h>
-
-#ifndef KECCAK_WORD
-#define KECCAK_WORD 8 /* 1, 2, 4, 8. */
-#endif
 
 /* KECCAK_FASTER
  * 0 => Smaller code.
@@ -35,22 +32,6 @@ extern "C" {
  */
 #ifndef KECCAK_FASTER
 #define KECCAK_FASTER 1
-#endif
-
-#if (KECCAK_WORD == 1)
-#define KECCAK_L 3
-#define KECCAK_uint uint8_t
-#elif (KECCAK_WORD == 2)
-#define KECCAK_L 4
-#define KECCAK_uint uint16_t
-#elif (KECCAK_WORD == 4)
-#define KECCAK_L 5
-#define KECCAK_uint uint32_t
-#elif (KECCAK_WORD == 8)
-#define KECCAK_L 6
-#define KECCAK_uint uint64_t
-#else
-#error "Invalid parameter KECCAK_WORD. Must be 1, 2, 4, or 8."
 #endif
 
 #define KECCAK_STATE_SIZE (25 * KECCAK_WORD) /* State size in bytes. */
@@ -61,29 +42,24 @@ extern "C" {
 #define KECCAK_PAD_MULTIRATE 0x01 /* Multirate PAD start: 10*. */
 #define KECCAK_PAD_END 0x80       /* PAD end: *01. */
 
-typedef struct KECCAK_t {
-  KECCAK_uint A[25]; /* Keccak state. */
-  uint8_t num;       /* State used bytes (absorbed or squeezed). */
-} KECCAK_t;
+void KECCAK_init(struct KECCAK_t *state);
 
-void KECCAK_init(KECCAK_t *state);
-
-void KECCAK_absorb(KECCAK_t *state, uint8_t rate, uint8_t rounds,
+void KECCAK_absorb(struct KECCAK_t *state, uint8_t rate, uint8_t rounds,
                    const void *buff, uint16_t num);
-void KECCAK_finish(KECCAK_t *state, uint8_t rate, uint8_t rounds,
+void KECCAK_finish(struct KECCAK_t *state, uint8_t rate, uint8_t rounds,
                    uint8_t pad_byte);
-void KECCAK_squeeze(KECCAK_t *state, uint8_t rate, uint8_t rounds, void *buff,
-                    uint16_t num);
+void KECCAK_squeeze(struct KECCAK_t *state, uint8_t rate, uint8_t rounds,
+                    void *buff, uint16_t num);
 
-void KECCAK_encrypt(KECCAK_t *state, uint8_t rate, uint8_t rounds, void *buff,
-                    uint16_t num);
-void KECCAK_decrypt(KECCAK_t *state, uint8_t rate, uint8_t rounds, void *buff,
-                    uint16_t num);
+void KECCAK_encrypt(struct KECCAK_t *state, uint8_t rate, uint8_t rounds,
+                    void *buff, uint16_t num);
+void KECCAK_decrypt(struct KECCAK_t *state, uint8_t rate, uint8_t rounds,
+                    void *buff, uint16_t num);
 
-void KECCAK_process_data(KECCAK_t *state, uint8_t rate, uint8_t rounds,
+void KECCAK_process_data(struct KECCAK_t *state, uint8_t rate, uint8_t rounds,
                          void *buff, uint16_t num,
                          void (*function)(uint8_t *state, uint8_t *buff));
-void KECCAK_f(KECCAK_t *state, uint8_t rounds);
+void KECCAK_f(struct KECCAK_t *state, uint8_t rounds);
 
 #ifdef __cplusplus
 }

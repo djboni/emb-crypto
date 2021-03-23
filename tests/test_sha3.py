@@ -20,202 +20,512 @@ import unittest
 import os
 import random
 
-module, ffi = {}, {}
+module_name = 'sha3_'
 
-for HASH_BITS in (512, 384, 256, 224):
+source_files = [
+  '../source/sha3.c',
+  '../source/keccak.c',
+]
 
-  module_name = 'sha3_%d_' % HASH_BITS
+include_paths = [
+  '../include',
+]
 
-  source_files = [
-    '../source/keccak.c',
-    '../source/keccak_hash.c',
-  ]
+compiler_options = [
+  '-std=c90',
+  '-pedantic',
+  '-DKECCAK_WORD=8',
+]
 
-  include_paths = [
-    '../include',
-  ]
-
-  compiler_options = [
-    '-std=c90',
-    '-pedantic',
-    '-DKECCAK_WORD=8',
-    '-DKECCAK_HASH_OUTPUT=%d' % (HASH_BITS / 8),
-    '-DKECCAK_XOF_SECURITY=%d' % (HASH_BITS / 16),
-  ]
-
-  module[HASH_BITS], ffi[HASH_BITS] = load(
-      source_files, include_paths, compiler_options,
-      module_name=module_name)
+module, ffi = load(
+    source_files, include_paths, compiler_options,
+    module_name=module_name)
 
 import hashlib
 
-sha3 = {
-  512: hashlib.sha3_512,
-  384: hashlib.sha3_384,
-  256: hashlib.sha3_256,
-  224: hashlib.sha3_224
-}
-shake = { 512: hashlib.shake_256, 256: hashlib.shake_128 }
+class TestSHA3_512(unittest.TestCase):
 
-class TestSHA3(unittest.TestCase):
+  def testSHA3_512Empty(self):
+    HASH_BITS = 512
+    length = 0
+    data = b'\x00' * length
+    hash_length = HASH_BITS // 8
 
-  def testSHA3Empty(self):
-    for HASH_BITS in (512, 384, 256, 224):
-      length = 0
-      data = b'\x00' * length
-      hash_length = HASH_BITS // 8
+    phash_ = ffi.new('struct SHA3_512_t[1]')
+    hash_ = phash_[0]
 
-      phash_ = ffi[HASH_BITS].new('struct KECCAK_HASH_t[1]')
-      hash_ = phash_[0]
+    module.SHA3_512_init(phash_)
+    module.SHA3_512_update(phash_, data, length)
+    module.SHA3_512_finish(phash_)
 
-      module[HASH_BITS].KECCAK_HASH_init(phash_)
-      module[HASH_BITS].KECCAK_HASH_update(phash_, data, length)
-      module[HASH_BITS].KECCAK_HASH_finish(phash_)
+    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = hash_module[:]
 
-      hash_module = ffi[HASH_BITS].buffer(hash_.state.A, hash_length)
-      hash_module = hash_module[:]
+    hash_reference = hashlib.sha3_512(data).digest()
 
-      hash_reference = sha3[HASH_BITS](data).digest()
+    self.assertEqual(hash_module, hash_reference)
 
-      self.assertEqual(hash_module, hash_reference)
+  def testSHA3_512Zero(self):
+    HASH_BITS = 512
+    length = 1
+    data = b'\x00' * length
+    hash_length = HASH_BITS // 8
 
-  def testSHA3Zero(self):
-    for HASH_BITS in (512, 384, 256, 224):
-      length = 1
-      data = b'\x00' * length
-      hash_length = HASH_BITS // 8
+    phash_ = ffi.new('struct SHA3_512_t[1]')
+    hash_ = phash_[0]
 
-      phash_ = ffi[HASH_BITS].new('struct KECCAK_HASH_t[1]')
-      hash_ = phash_[0]
+    module.SHA3_512_init(phash_)
+    module.SHA3_512_update(phash_, data, length)
+    module.SHA3_512_finish(phash_)
 
-      module[HASH_BITS].KECCAK_HASH_init(phash_)
-      module[HASH_BITS].KECCAK_HASH_update(phash_, data, length)
-      module[HASH_BITS].KECCAK_HASH_finish(phash_)
+    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = hash_module[:]
 
-      hash_module = ffi[HASH_BITS].buffer(hash_.state.A, hash_length)
-      hash_module = hash_module[:]
+    hash_reference = hashlib.sha3_512(data).digest()
 
-      hash_reference = sha3[HASH_BITS](data).digest()
+    self.assertEqual(hash_module, hash_reference)
 
-      self.assertEqual(hash_module, hash_reference)
+  def testSHA3_512Zeros(self):
+    HASH_BITS = 512
+    length = random.randint(0, 1024)
+    data = b'\x00' * length
+    hash_length = HASH_BITS // 8
 
-  def testSHA3Zeros(self):
-    for HASH_BITS in (512, 384, 256, 224):
-      length = random.randint(0, 1024)
-      data = b'\x00' * length
-      hash_length = HASH_BITS // 8
+    phash_ = ffi.new('struct SHA3_512_t[1]')
+    hash_ = phash_[0]
 
-      phash_ = ffi[HASH_BITS].new('struct KECCAK_HASH_t[1]')
-      hash_ = phash_[0]
+    module.SHA3_512_init(phash_)
+    module.SHA3_512_update(phash_, data, length)
+    module.SHA3_512_finish(phash_)
 
-      module[HASH_BITS].KECCAK_HASH_init(phash_)
-      module[HASH_BITS].KECCAK_HASH_update(phash_, data, length)
-      module[HASH_BITS].KECCAK_HASH_finish(phash_)
+    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = hash_module[:]
 
-      hash_module = ffi[HASH_BITS].buffer(hash_.state.A, hash_length)
-      hash_module = hash_module[:]
+    hash_reference = hashlib.sha3_512(data).digest()
 
-      hash_reference = sha3[HASH_BITS](data).digest()
+    self.assertEqual(hash_module, hash_reference)
 
-      self.assertEqual(hash_module, hash_reference)
+  def testSHA3_512Random(self):
+    HASH_BITS = 512
+    length = random.randint(0, 1024)
+    data = os.urandom(length)
+    hash_length = HASH_BITS // 8
 
-  def testSHA3Random(self):
-    for HASH_BITS in (512, 384, 256, 224):
-      length = random.randint(0, 1024)
-      data = os.urandom(length)
-      hash_length = HASH_BITS // 8
+    phash_ = ffi.new('struct SHA3_512_t[1]')
+    hash_ = phash_[0]
 
-      phash_ = ffi[HASH_BITS].new('struct KECCAK_HASH_t[1]')
-      hash_ = phash_[0]
+    module.SHA3_512_init(phash_)
+    module.SHA3_512_update(phash_, data, length)
+    module.SHA3_512_finish(phash_)
 
-      module[HASH_BITS].KECCAK_HASH_init(phash_)
-      module[HASH_BITS].KECCAK_HASH_update(phash_, data, length)
-      module[HASH_BITS].KECCAK_HASH_finish(phash_)
+    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = hash_module[:]
 
-      hash_module = ffi[HASH_BITS].buffer(hash_.state.A, hash_length)
-      hash_module = hash_module[:]
+    hash_reference = hashlib.sha3_512(data).digest()
 
-      hash_reference = sha3[HASH_BITS](data).digest()
+    self.assertEqual(hash_module, hash_reference)
 
-      self.assertEqual(hash_module, hash_reference)
+class TestSHA3_384(unittest.TestCase):
 
-class TestSHAKE(unittest.TestCase):
+  def testSHA3_384Empty(self):
+    HASH_BITS = 384
+    length = 0
+    data = b'\x00' * length
+    hash_length = HASH_BITS // 8
 
-  def testSHAKEEmpty(self):
-    for HASH_BITS in (512, 256):
-      length = 0
-      data = b'\x00' * length
-      xof_length = HASH_BITS // 8
+    phash_ = ffi.new('struct SHA3_384_t[1]')
+    hash_ = phash_[0]
 
-      pxof = ffi[HASH_BITS].new('struct KECCAK_XOF_t[1]')
+    module.SHA3_384_init(phash_)
+    module.SHA3_384_update(phash_, data, length)
+    module.SHA3_384_finish(phash_)
 
-      module[HASH_BITS].KECCAK_XOF_init(pxof)
-      module[HASH_BITS].KECCAK_XOF_absorb(pxof, data, length)
-      module[HASH_BITS].KECCAK_XOF_finish(pxof)
+    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = hash_module[:]
 
-      xof_module = b'\x00' * xof_length
-      module[HASH_BITS].KECCAK_XOF_squeeze(pxof, xof_module, xof_length)
+    hash_reference = hashlib.sha3_384(data).digest()
 
-      xof_reference = shake[HASH_BITS](data).digest(xof_length)
+    self.assertEqual(hash_module, hash_reference)
 
-      self.assertEqual(xof_module, xof_reference)
+  def testSHA3_384Zero(self):
+    HASH_BITS = 384
+    length = 1
+    data = b'\x00' * length
+    hash_length = HASH_BITS // 8
 
-  def testSHAKEZero(self):
-    for HASH_BITS in (512, 256):
-      length = 1
-      data = b'\x00' * length
-      xof_length = HASH_BITS // 8
+    phash_ = ffi.new('struct SHA3_384_t[1]')
+    hash_ = phash_[0]
 
-      pxof = ffi[HASH_BITS].new('struct KECCAK_XOF_t[1]')
+    module.SHA3_384_init(phash_)
+    module.SHA3_384_update(phash_, data, length)
+    module.SHA3_384_finish(phash_)
 
-      module[HASH_BITS].KECCAK_XOF_init(pxof)
-      module[HASH_BITS].KECCAK_XOF_absorb(pxof, data, length)
-      module[HASH_BITS].KECCAK_XOF_finish(pxof)
+    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = hash_module[:]
 
-      xof_module = b'\x00' * xof_length
-      module[HASH_BITS].KECCAK_XOF_squeeze(pxof, xof_module, xof_length)
+    hash_reference = hashlib.sha3_384(data).digest()
 
-      xof_reference = shake[HASH_BITS](data).digest(xof_length)
+    self.assertEqual(hash_module, hash_reference)
 
-      self.assertEqual(xof_module, xof_reference)
+  def testSHA3_384Zeros(self):
+    HASH_BITS = 384
+    length = random.randint(0, 1024)
+    data = b'\x00' * length
+    hash_length = HASH_BITS // 8
 
-  def testSHAKEZeros(self):
-    for HASH_BITS in (512, 256):
-      length = random.randint(0, 1024)
-      data = b'\x00' * length
-      xof_length = HASH_BITS // 8
+    phash_ = ffi.new('struct SHA3_384_t[1]')
+    hash_ = phash_[0]
 
-      pxof = ffi[HASH_BITS].new('struct KECCAK_XOF_t[1]')
+    module.SHA3_384_init(phash_)
+    module.SHA3_384_update(phash_, data, length)
+    module.SHA3_384_finish(phash_)
 
-      module[HASH_BITS].KECCAK_XOF_init(pxof)
-      module[HASH_BITS].KECCAK_XOF_absorb(pxof, data, length)
-      module[HASH_BITS].KECCAK_XOF_finish(pxof)
+    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = hash_module[:]
 
-      xof_module = b'\x00' * xof_length
-      module[HASH_BITS].KECCAK_XOF_squeeze(pxof, xof_module, xof_length)
+    hash_reference = hashlib.sha3_384(data).digest()
 
-      xof_reference = shake[HASH_BITS](data).digest(xof_length)
+    self.assertEqual(hash_module, hash_reference)
 
-      self.assertEqual(xof_module, xof_reference)
+  def testSHA3_384Random(self):
+    HASH_BITS = 384
+    length = random.randint(0, 1024)
+    data = os.urandom(length)
+    hash_length = HASH_BITS // 8
 
-  def testSHAKERandom(self):
-    for HASH_BITS in (512, 256):
-      length = random.randint(0, 1024)
-      data = os.urandom(length)
-      xof_length = HASH_BITS // 8
+    phash_ = ffi.new('struct SHA3_384_t[1]')
+    hash_ = phash_[0]
 
-      pxof = ffi[HASH_BITS].new('struct KECCAK_XOF_t[1]')
+    module.SHA3_384_init(phash_)
+    module.SHA3_384_update(phash_, data, length)
+    module.SHA3_384_finish(phash_)
 
-      module[HASH_BITS].KECCAK_XOF_init(pxof)
-      module[HASH_BITS].KECCAK_XOF_absorb(pxof, data, length)
-      module[HASH_BITS].KECCAK_XOF_finish(pxof)
+    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = hash_module[:]
 
-      xof_module = b'\x00' * xof_length
-      module[HASH_BITS].KECCAK_XOF_squeeze(pxof, xof_module, xof_length)
+    hash_reference = hashlib.sha3_384(data).digest()
 
-      xof_reference = shake[HASH_BITS](data).digest(xof_length)
+    self.assertEqual(hash_module, hash_reference)
 
-      self.assertEqual(xof_module, xof_reference)
+class TestSHA3_256(unittest.TestCase):
 
+  def testSHA3_256Empty(self):
+    HASH_BITS = 256
+    length = 0
+    data = b'\x00' * length
+    hash_length = HASH_BITS // 8
+
+    phash_ = ffi.new('struct SHA3_256_t[1]')
+    hash_ = phash_[0]
+
+    module.SHA3_256_init(phash_)
+    module.SHA3_256_update(phash_, data, length)
+    module.SHA3_256_finish(phash_)
+
+    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = hash_module[:]
+
+    hash_reference = hashlib.sha3_256(data).digest()
+
+    self.assertEqual(hash_module, hash_reference)
+
+  def testSHA3_256Zero(self):
+    HASH_BITS = 256
+    length = 1
+    data = b'\x00' * length
+    hash_length = HASH_BITS // 8
+
+    phash_ = ffi.new('struct SHA3_256_t[1]')
+    hash_ = phash_[0]
+
+    module.SHA3_256_init(phash_)
+    module.SHA3_256_update(phash_, data, length)
+    module.SHA3_256_finish(phash_)
+
+    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = hash_module[:]
+
+    hash_reference = hashlib.sha3_256(data).digest()
+
+    self.assertEqual(hash_module, hash_reference)
+
+  def testSHA3_256Zeros(self):
+    HASH_BITS = 256
+    length = random.randint(0, 1024)
+    data = b'\x00' * length
+    hash_length = HASH_BITS // 8
+
+    phash_ = ffi.new('struct SHA3_256_t[1]')
+    hash_ = phash_[0]
+
+    module.SHA3_256_init(phash_)
+    module.SHA3_256_update(phash_, data, length)
+    module.SHA3_256_finish(phash_)
+
+    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = hash_module[:]
+
+    hash_reference = hashlib.sha3_256(data).digest()
+
+    self.assertEqual(hash_module, hash_reference)
+
+  def testSHA3_256Random(self):
+    HASH_BITS = 256
+    length = random.randint(0, 1024)
+    data = os.urandom(length)
+    hash_length = HASH_BITS // 8
+
+    phash_ = ffi.new('struct SHA3_256_t[1]')
+    hash_ = phash_[0]
+
+    module.SHA3_256_init(phash_)
+    module.SHA3_256_update(phash_, data, length)
+    module.SHA3_256_finish(phash_)
+
+    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = hash_module[:]
+
+    hash_reference = hashlib.sha3_256(data).digest()
+
+    self.assertEqual(hash_module, hash_reference)
+
+class TestSHA3_224(unittest.TestCase):
+
+  def testSHA3_224Empty(self):
+    HASH_BITS = 224
+    length = 0
+    data = b'\x00' * length
+    hash_length = HASH_BITS // 8
+
+    phash_ = ffi.new('struct SHA3_224_t[1]')
+    hash_ = phash_[0]
+
+    module.SHA3_224_init(phash_)
+    module.SHA3_224_update(phash_, data, length)
+    module.SHA3_224_finish(phash_)
+
+    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = hash_module[:]
+
+    hash_reference = hashlib.sha3_224(data).digest()
+
+    self.assertEqual(hash_module, hash_reference)
+
+  def testSHA3_256Zero(self):
+    HASH_BITS = 224
+    length = 1
+    data = b'\x00' * length
+    hash_length = HASH_BITS // 8
+
+    phash_ = ffi.new('struct SHA3_224_t[1]')
+    hash_ = phash_[0]
+
+    module.SHA3_224_init(phash_)
+    module.SHA3_224_update(phash_, data, length)
+    module.SHA3_224_finish(phash_)
+
+    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = hash_module[:]
+
+    hash_reference = hashlib.sha3_224(data).digest()
+
+    self.assertEqual(hash_module, hash_reference)
+
+  def testSHA3_256Zeros(self):
+    HASH_BITS = 224
+    length = random.randint(0, 1024)
+    data = b'\x00' * length
+    hash_length = HASH_BITS // 8
+
+    phash_ = ffi.new('struct SHA3_224_t[1]')
+    hash_ = phash_[0]
+
+    module.SHA3_224_init(phash_)
+    module.SHA3_224_update(phash_, data, length)
+    module.SHA3_224_finish(phash_)
+
+    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = hash_module[:]
+
+    hash_reference = hashlib.sha3_224(data).digest()
+
+    self.assertEqual(hash_module, hash_reference)
+
+  def testSHA3_256Random(self):
+    HASH_BITS = 224
+    length = random.randint(0, 1024)
+    data = os.urandom(length)
+    hash_length = HASH_BITS // 8
+
+    phash_ = ffi.new('struct SHA3_224_t[1]')
+    hash_ = phash_[0]
+
+    module.SHA3_224_init(phash_)
+    module.SHA3_224_update(phash_, data, length)
+    module.SHA3_224_finish(phash_)
+
+    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = hash_module[:]
+
+    hash_reference = hashlib.sha3_224(data).digest()
+
+    self.assertEqual(hash_module, hash_reference)
+
+class TestSHAKE_256(unittest.TestCase):
+
+  def testSHAKE_256Empty(self):
+    HASH_BITS = 256
+    length = 0
+    data = b'\x00' * length
+    hash_length = HASH_BITS // 8
+
+    phash_ = ffi.new('struct SHAKE_256_t[1]')
+    hash_ = phash_[0]
+
+    hash_module = b'\x00' * hash_length
+    module.SHAKE_256_init(phash_)
+    module.SHAKE_256_absorb(phash_, data, length)
+    module.SHAKE_256_finish(phash_)
+    module.SHAKE_256_squeeze(phash_, hash_module, hash_length)
+
+    hash_reference = hashlib.shake_256(data).digest(hash_length)
+
+    self.assertEqual(hash_module, hash_reference)
+
+  def testSHAKE_256Zero(self):
+    HASH_BITS = 256
+    length = 1
+    data = b'\x00' * length
+    hash_length = HASH_BITS // 8
+
+    phash_ = ffi.new('struct SHAKE_256_t[1]')
+    hash_ = phash_[0]
+
+    hash_module = b'\x00' * hash_length
+    module.SHAKE_256_init(phash_)
+    module.SHAKE_256_absorb(phash_, data, length)
+    module.SHAKE_256_finish(phash_)
+    module.SHAKE_256_squeeze(phash_, hash_module, hash_length)
+
+    hash_reference = hashlib.shake_256(data).digest(hash_length)
+
+    self.assertEqual(hash_module, hash_reference)
+
+  def testSHAKE_256Zeros(self):
+    HASH_BITS = 256
+    length = random.randint(0, 1024)
+    data = b'\x00' * length
+    hash_length = HASH_BITS // 8
+
+    phash_ = ffi.new('struct SHAKE_256_t[1]')
+    hash_ = phash_[0]
+
+    hash_module = b'\x00' * hash_length
+    module.SHAKE_256_init(phash_)
+    module.SHAKE_256_absorb(phash_, data, length)
+    module.SHAKE_256_finish(phash_)
+    module.SHAKE_256_squeeze(phash_, hash_module, hash_length)
+
+    hash_reference = hashlib.shake_256(data).digest(hash_length)
+
+    self.assertEqual(hash_module, hash_reference)
+
+  def testSHAKE_256Random(self):
+    HASH_BITS = 256
+    length = random.randint(0, 1024)
+    data = os.urandom(length)
+    hash_length = HASH_BITS // 8
+
+    phash_ = ffi.new('struct SHAKE_256_t[1]')
+    hash_ = phash_[0]
+
+    hash_module = b'\x00' * hash_length
+    module.SHAKE_256_init(phash_)
+    module.SHAKE_256_absorb(phash_, data, length)
+    module.SHAKE_256_finish(phash_)
+    module.SHAKE_256_squeeze(phash_, hash_module, hash_length)
+
+    hash_reference = hashlib.shake_256(data).digest(hash_length)
+
+    self.assertEqual(hash_module, hash_reference)
+
+class TestSHAKE_128(unittest.TestCase):
+
+  def testSHAKE_128Empty(self):
+    HASH_BITS = 128
+    length = 0
+    data = b'\x00' * length
+    hash_length = HASH_BITS // 8
+
+    phash_ = ffi.new('struct SHAKE_128_t[1]')
+    hash_ = phash_[0]
+
+    hash_module = b'\x00' * hash_length
+    module.SHAKE_128_init(phash_)
+    module.SHAKE_128_absorb(phash_, data, length)
+    module.SHAKE_128_finish(phash_)
+    module.SHAKE_128_squeeze(phash_, hash_module, hash_length)
+
+    hash_reference = hashlib.shake_128(data).digest(hash_length)
+
+    self.assertEqual(hash_module, hash_reference)
+
+  def testSHAKE_128Zero(self):
+    HASH_BITS = 128
+    length = 1
+    data = b'\x00' * length
+    hash_length = HASH_BITS // 8
+
+    phash_ = ffi.new('struct SHAKE_128_t[1]')
+    hash_ = phash_[0]
+
+    hash_module = b'\x00' * hash_length
+    module.SHAKE_128_init(phash_)
+    module.SHAKE_128_absorb(phash_, data, length)
+    module.SHAKE_128_finish(phash_)
+    module.SHAKE_128_squeeze(phash_, hash_module, hash_length)
+
+    hash_reference = hashlib.shake_128(data).digest(hash_length)
+
+    self.assertEqual(hash_module, hash_reference)
+
+  def testSHAKE_128Zeros(self):
+    HASH_BITS = 128
+    length = random.randint(0, 1024)
+    data = b'\x00' * length
+    hash_length = HASH_BITS // 8
+
+    phash_ = ffi.new('struct SHAKE_128_t[1]')
+    hash_ = phash_[0]
+
+    hash_module = b'\x00' * hash_length
+    module.SHAKE_128_init(phash_)
+    module.SHAKE_128_absorb(phash_, data, length)
+    module.SHAKE_128_finish(phash_)
+    module.SHAKE_128_squeeze(phash_, hash_module, hash_length)
+
+    hash_reference = hashlib.shake_128(data).digest(hash_length)
+
+    self.assertEqual(hash_module, hash_reference)
+
+  def testSHAKE_128Random(self):
+    HASH_BITS = 128
+    length = random.randint(0, 1024)
+    data = os.urandom(length)
+    hash_length = HASH_BITS // 8
+
+    phash_ = ffi.new('struct SHAKE_128_t[1]')
+    hash_ = phash_[0]
+
+    hash_module = b'\x00' * hash_length
+    module.SHAKE_128_init(phash_)
+    module.SHAKE_128_absorb(phash_, data, length)
+    module.SHAKE_128_finish(phash_)
+    module.SHAKE_128_squeeze(phash_, hash_module, hash_length)
+
+    hash_reference = hashlib.shake_128(data).digest(hash_length)
+
+    self.assertEqual(hash_module, hash_reference)
+    
 if __name__ == '__main__':
   unittest.main()

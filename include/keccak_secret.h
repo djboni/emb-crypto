@@ -87,7 +87,7 @@ enum KECCAK_SECRET_PAD_t {
 };
 
 typedef struct KECCAK_SECRET_t {
-  KECCAK_t state;
+  struct KECCAK_t state;
   uint8_t pad;
 } KECCAK_SECRET_t;
 
