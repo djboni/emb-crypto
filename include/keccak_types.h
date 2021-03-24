@@ -31,23 +31,23 @@ extern "C" {
 
 #if (KECCAK_WORD == 1)
 #define KECCAK_L 3
-#define KECCAK_uint uint8_t
+typedef uint8_t keccak_uint_t;
 #elif (KECCAK_WORD == 2)
 #define KECCAK_L 4
-#define KECCAK_uint uint16_t
+typedef uint16_t keccak_uint_t;
 #elif (KECCAK_WORD == 4)
 #define KECCAK_L 5
-#define KECCAK_uint uint32_t
+typedef uint32_t keccak_uint_t;
 #elif (KECCAK_WORD == 8)
 #define KECCAK_L 6
-#define KECCAK_uint uint64_t
+typedef uint64_t keccak_uint_t;
 #else
 #error "Invalid parameter KECCAK_WORD. Must be 1, 2, 4, or 8."
 #endif
 
-struct KECCAK_t {
-  KECCAK_uint A[25]; /* Keccak state. */
-  uint8_t num;       /* State used bytes (absorbed or squeezed). */
+struct keccak_t {
+  keccak_uint_t a[25]; /* Keccak state. */
+  uint8_t num;         /* State used bytes (absorbed or squeezed). */
 };
 
 #ifdef __cplusplus

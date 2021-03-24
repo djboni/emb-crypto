@@ -25,17 +25,17 @@ extern "C" {
 
 #include <stdint.h>
 
-struct SHA1_t {
+struct sha1_t {
   uint32_t hash[5];
   uint32_t data[16];
   uint64_t num;
 };
 
-void SHA1_init(struct SHA1_t *state);
-void SHA1_update(struct SHA1_t *state, const void *data, uint16_t num);
-void SHA1_finish(struct SHA1_t *state);
+void SHA1Init(struct sha1_t *state_ptr);
+void SHA1Update(struct sha1_t *state_ptr, const void *data_ptr, uint16_t num);
+void SHA1Finish(struct sha1_t *state_ptr);
 
-void SHA1_big_to_little_endian(struct SHA1_t *state);
+void SHA1BigToLittleEndian(struct sha1_t *state_ptr);
 
 #ifdef __cplusplus
 }

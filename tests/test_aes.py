@@ -18,6 +18,7 @@ from unit_test_c_with_python.load_c import load
 
 import unittest
 import os
+import random
 
 AES_BLOCK_LEN = 16
 
@@ -61,7 +62,7 @@ class TestECBEncrypt(unittest.TestCase):
       plain = b'\x00' * AES_BLOCK_LEN
 
       cipher_module = b'\x00' * AES_BLOCK_LEN
-      module[AES_KEY_LEN].aes_ecb_encrypt(key, plain, cipher_module)
+      module[AES_KEY_LEN].AES_ECBEncrypt(key, plain, cipher_module)
 
       # The correct implementation is automatically selected with by the
       # key length
@@ -71,15 +72,16 @@ class TestECBEncrypt(unittest.TestCase):
 
   def testECBEncryptRandom(self):
     for AES_KEY_LEN in (16, 24, 32):
-      key = os.urandom(AES_KEY_LEN)
-      plain = os.urandom(AES_BLOCK_LEN)
+      for count in range(1024):
+        key = os.urandom(AES_KEY_LEN)
+        plain = os.urandom(AES_BLOCK_LEN)
 
-      cipher_module = b'\x00' * AES_BLOCK_LEN
-      module[AES_KEY_LEN].aes_ecb_encrypt(key, plain, cipher_module)
+        cipher_module = b'\x00' * AES_BLOCK_LEN
+        module[AES_KEY_LEN].AES_ECBEncrypt(key, plain, cipher_module)
 
-      cipher_reference = AES.new(key, AES.MODE_ECB).encrypt(plain)
+        cipher_reference = AES.new(key, AES.MODE_ECB).encrypt(plain)
 
-      self.assertEqual(cipher_module, cipher_reference)
+        self.assertEqual(cipher_module, cipher_reference)
 
 class TestECBDecrypt(unittest.TestCase):
 
@@ -89,7 +91,7 @@ class TestECBDecrypt(unittest.TestCase):
       cipher = b'\x00' * AES_BLOCK_LEN
 
       plain_module = b'\x00' * AES_BLOCK_LEN
-      module[AES_KEY_LEN].aes_ecb_decrypt(key, cipher, plain_module)
+      module[AES_KEY_LEN].AES_ECBDecrypt(key, cipher, plain_module)
 
       plain_reference = AES.new(key, AES.MODE_ECB).decrypt(cipher)
 
@@ -97,15 +99,16 @@ class TestECBDecrypt(unittest.TestCase):
 
   def testECBDecryptRandom(self):
     for AES_KEY_LEN in (16, 24, 32):
-      key = os.urandom(AES_KEY_LEN)
-      cipher = os.urandom(AES_BLOCK_LEN)
+      for count in range(1024):
+        key = os.urandom(AES_KEY_LEN)
+        cipher = os.urandom(AES_BLOCK_LEN)
 
-      plain_module = b'\x00' * AES_BLOCK_LEN
-      module[AES_KEY_LEN].aes_ecb_decrypt(key, cipher, plain_module)
+        plain_module = b'\x00' * AES_BLOCK_LEN
+        module[AES_KEY_LEN].AES_ECBDecrypt(key, cipher, plain_module)
 
-      plain_reference = AES.new(key, AES.MODE_ECB).decrypt(cipher)
+        plain_reference = AES.new(key, AES.MODE_ECB).decrypt(cipher)
 
-      self.assertEqual(plain_module, plain_reference)
+        self.assertEqual(plain_module, plain_reference)
 
 class TestCBCEncrypt(unittest.TestCase):
 
@@ -117,7 +120,7 @@ class TestCBCEncrypt(unittest.TestCase):
       plain = b'\x00' * length
 
       cipher_module = b'\x00' * length
-      module[AES_KEY_LEN].aes_cbc_encrypt(key, iv, plain, length, cipher_module)
+      module[AES_KEY_LEN].AES_CBCEncrypt(key, iv, plain, length, cipher_module)
 
       iv_ecb = AES.new(key, AES.MODE_ECB).encrypt(iv)
       cipher_reference = AES.new(key, AES.MODE_CBC, iv_ecb).encrypt(plain)
@@ -126,18 +129,20 @@ class TestCBCEncrypt(unittest.TestCase):
 
   def testCBCEncryptRandom(self):
     for AES_KEY_LEN in (16, 24, 32):
-      length = AES_BLOCK_LEN * 2
-      key = os.urandom(AES_KEY_LEN)
-      iv = os.urandom(AES_BLOCK_LEN)
-      plain = os.urandom(length)
+      for count in range(1024):
+        num = random.randint(0, 16)
+        length = AES_BLOCK_LEN * num
+        key = os.urandom(AES_KEY_LEN)
+        iv = os.urandom(AES_BLOCK_LEN)
+        plain = os.urandom(length)
 
-      cipher_module = b'\x00' * length
-      module[AES_KEY_LEN].aes_cbc_encrypt(key, iv, plain, length, cipher_module)
+        cipher_module = b'\x00' * length
+        module[AES_KEY_LEN].AES_CBCEncrypt(key, iv, plain, length, cipher_module)
 
-      iv_ecb = AES.new(key, AES.MODE_ECB).encrypt(iv)
-      cipher_reference = AES.new(key, AES.MODE_CBC, iv_ecb).encrypt(plain)
+        iv_ecb = AES.new(key, AES.MODE_ECB).encrypt(iv)
+        cipher_reference = AES.new(key, AES.MODE_CBC, iv_ecb).encrypt(plain)
 
-      self.assertEqual(cipher_module, cipher_reference)
+        self.assertEqual(cipher_module, cipher_reference)
 
 class TestCBCDecrypt(unittest.TestCase):
 
@@ -149,7 +154,7 @@ class TestCBCDecrypt(unittest.TestCase):
       cipher = b'\x00' * length
 
       plain_module = b'\x00' * length
-      module[AES_KEY_LEN].aes_cbc_decrypt(key, iv, cipher, length, plain_module)
+      module[AES_KEY_LEN].AES_CBCDecrypt(key, iv, cipher, length, plain_module)
 
       iv_ecb = AES.new(key, AES.MODE_ECB).encrypt(iv)
       plain_reference = AES.new(key, AES.MODE_CBC, iv_ecb).decrypt(cipher)
@@ -158,18 +163,20 @@ class TestCBCDecrypt(unittest.TestCase):
 
   def testCBCDecryptRandom(self):
     for AES_KEY_LEN in (16, 24, 32):
-      length = AES_BLOCK_LEN * 2
-      key = os.urandom(AES_KEY_LEN)
-      iv = os.urandom(AES_BLOCK_LEN)
-      cipher = os.urandom(length)
+      for count in range(1024):
+        num = random.randint(0, 16)
+        length = AES_BLOCK_LEN * num
+        key = os.urandom(AES_KEY_LEN)
+        iv = os.urandom(AES_BLOCK_LEN)
+        cipher = os.urandom(length)
 
-      plain_module = b'\x00' * length
-      module[AES_KEY_LEN].aes_cbc_decrypt(key, iv, cipher, length, plain_module)
+        plain_module = b'\x00' * length
+        module[AES_KEY_LEN].AES_CBCDecrypt(key, iv, cipher, length, plain_module)
 
-      iv_ecb = AES.new(key, AES.MODE_ECB).encrypt(iv)
-      plain_reference = AES.new(key, AES.MODE_CBC, iv_ecb).decrypt(cipher)
+        iv_ecb = AES.new(key, AES.MODE_ECB).encrypt(iv)
+        plain_reference = AES.new(key, AES.MODE_CBC, iv_ecb).decrypt(cipher)
 
-      self.assertEqual(plain_module, plain_reference)
+        self.assertEqual(plain_module, plain_reference)
 
 if __name__ == '__main__':
   unittest.main()

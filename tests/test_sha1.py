@@ -50,13 +50,13 @@ class TestSHA1(unittest.TestCase):
     data = b'\x00' * length
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHA1_t[1]')
+    phash_ = ffi.new('struct sha1_t[1]')
     hash_ = phash_[0]
 
-    module.SHA1_init(phash_)
-    module.SHA1_update(phash_, data, length)
-    module.SHA1_finish(phash_)
-    module.SHA1_big_to_little_endian(phash_)
+    module.SHA1Init(phash_)
+    module.SHA1Update(phash_, data, length)
+    module.SHA1Finish(phash_)
+    module.SHA1BigToLittleEndian(phash_)
 
     hash_module = ffi.buffer(hash_.hash, hash_length)
     hash_module = hash_module[:]
@@ -70,13 +70,13 @@ class TestSHA1(unittest.TestCase):
     data = b'\x00' * length
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHA1_t[1]')
+    phash_ = ffi.new('struct sha1_t[1]')
     hash_ = phash_[0]
 
-    module.SHA1_init(phash_)
-    module.SHA1_update(phash_, data, length)
-    module.SHA1_finish(phash_)
-    module.SHA1_big_to_little_endian(phash_)
+    module.SHA1Init(phash_)
+    module.SHA1Update(phash_, data, length)
+    module.SHA1Finish(phash_)
+    module.SHA1BigToLittleEndian(phash_)
 
     hash_module = ffi.buffer(hash_.hash, hash_length)
     hash_module = hash_module[:]
@@ -90,13 +90,13 @@ class TestSHA1(unittest.TestCase):
     data = b'\x00' * length
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHA1_t[1]')
+    phash_ = ffi.new('struct sha1_t[1]')
     hash_ = phash_[0]
 
-    module.SHA1_init(phash_)
-    module.SHA1_update(phash_, data, length)
-    module.SHA1_finish(phash_)
-    module.SHA1_big_to_little_endian(phash_)
+    module.SHA1Init(phash_)
+    module.SHA1Update(phash_, data, length)
+    module.SHA1Finish(phash_)
+    module.SHA1BigToLittleEndian(phash_)
 
     hash_module = ffi.buffer(hash_.hash, hash_length)
     hash_module = hash_module[:]
@@ -106,24 +106,25 @@ class TestSHA1(unittest.TestCase):
     self.assertEqual(hash_module, hash_reference)
 
   def testSHA1Random(self):
-    length = random.randint(0, 1024)
-    data = os.urandom(length)
-    hash_length = HASH_BITS // 8
+    for count in range(1024):
+      length = random.randint(0, 1024)
+      data = os.urandom(length)
+      hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHA1_t[1]')
-    hash_ = phash_[0]
+      phash_ = ffi.new('struct sha1_t[1]')
+      hash_ = phash_[0]
 
-    module.SHA1_init(phash_)
-    module.SHA1_update(phash_, data, length)
-    module.SHA1_finish(phash_)
-    module.SHA1_big_to_little_endian(phash_)
+      module.SHA1Init(phash_)
+      module.SHA1Update(phash_, data, length)
+      module.SHA1Finish(phash_)
+      module.SHA1BigToLittleEndian(phash_)
 
-    hash_module = ffi.buffer(hash_.hash, hash_length)
-    hash_module = hash_module[:]
+      hash_module = ffi.buffer(hash_.hash, hash_length)
+      hash_module = hash_module[:]
 
-    hash_reference = hashlib.sha1(data).digest()
+      hash_reference = hashlib.sha1(data).digest()
 
-    self.assertEqual(hash_module, hash_reference)
+      self.assertEqual(hash_module, hash_reference)
 
 if __name__ == '__main__':
   unittest.main()

@@ -18,75 +18,76 @@
 
 #include "keccak_secret.h"
 
-static void KECCAK_SECRET_finish(KECCAK_SECRET_t *secret, uint8_t rounds) {
-  KECCAK_finish(&secret->state, KECCAK_SECRET_RATE, rounds, secret->pad);
+static void KeccakSecretFinish(struct keccak_secret_t *secret_ptr,
+                               uint8_t rounds) {
+  KeccakFinish(&secret_ptr->state, KECCAK_SECRET_RATE, rounds, secret_ptr->pad);
 }
 
-void KECCAK_SECRET_init(KECCAK_SECRET_t *secret, const void *key,
-                        uint8_t key_length) {
-  KECCAK_init(&secret->state);
-  secret->pad = KECCAK_SECRET_PAD_A;
-  KECCAK_absorb(&secret->state, KECCAK_SECRET_RATE, KECCAK_SECRET_NR_START, key,
-                key_length);
-  secret->pad = KECCAK_SECRET_PAD_K;
-  KECCAK_SECRET_finish(secret, KECCAK_SECRET_NR_START);
-  secret->pad = KECCAK_SECRET_PAD_A;
+void KeccakSecretInit(struct keccak_secret_t *secret_ptr, const void *key_ptr,
+                      uint8_t key_length) {
+  KeccakInit(&secret_ptr->state);
+  secret_ptr->pad = KECCAK_SECRET_PAD_A;
+  KeccakAbsorb(&secret_ptr->state, KECCAK_SECRET_RATE, KECCAK_SECRET_NR_START,
+               key_ptr, key_length);
+  secret_ptr->pad = KECCAK_SECRET_PAD_K;
+  KeccakSecretFinish(secret_ptr, KECCAK_SECRET_NR_START);
+  secret_ptr->pad = KECCAK_SECRET_PAD_A;
 }
 
-void KECCAK_SECRET_absorb_A(KECCAK_SECRET_t *secret, const void *buff,
+void KeccakSecretAbsorbA(struct keccak_secret_t *secret_ptr,
+                         const void *buff_ptr, uint8_t buff_length) {
+  if (secret_ptr->pad != KECCAK_SECRET_PAD_A) {
+    KeccakSecretFinish(secret_ptr, KECCAK_SECRET_NR_STEP);
+    secret_ptr->pad = KECCAK_SECRET_PAD_A;
+  }
+  KeccakAbsorb(&secret_ptr->state, KECCAK_SECRET_RATE, KECCAK_SECRET_NR_STEP,
+               buff_ptr, buff_length);
+}
+
+void KeccakSecretEncryptB(struct keccak_secret_t *secret_ptr, void *buff_ptr,
+                          uint8_t buff_length) {
+  if (secret_ptr->pad != KECCAK_SECRET_PAD_BC) {
+    KeccakSecretFinish(secret_ptr, KECCAK_SECRET_NR_STEP);
+    secret_ptr->pad = KECCAK_SECRET_PAD_BC;
+  }
+  KeccakEncrypt(&secret_ptr->state, KECCAK_SECRET_RATE, KECCAK_SECRET_NR_STEP,
+                buff_ptr, buff_length);
+}
+
+void KeccakSecretDecryptC(struct keccak_secret_t *secret_ptr, void *buff_ptr,
+                          uint8_t buff_length) {
+  if (secret_ptr->pad != KECCAK_SECRET_PAD_BC) {
+    KeccakSecretFinish(secret_ptr, KECCAK_SECRET_NR_STEP);
+    secret_ptr->pad = KECCAK_SECRET_PAD_BC;
+  }
+  KeccakDecrypt(&secret_ptr->state, KECCAK_SECRET_RATE, KECCAK_SECRET_NR_STEP,
+                buff_ptr, buff_length);
+}
+
+void KeccakSecretSqueezeD(struct keccak_secret_t *secret_ptr, void *buff_ptr,
+                          uint8_t buff_length) {
+  if (secret_ptr->pad != KECCAK_SECRET_PAD_D) {
+    KeccakSecretFinish(secret_ptr, KECCAK_SECRET_NR_STRIDE);
+    secret_ptr->pad = KECCAK_SECRET_PAD_D;
+  }
+  KeccakSqueeze(&secret_ptr->state, KECCAK_SECRET_RATE, KECCAK_SECRET_NR_STEP,
+                buff_ptr, buff_length);
+}
+
+uint8_t KeccakSecretVerifyD(struct keccak_secret_t *secret_ptr, void *buff_ptr,
                             uint8_t buff_length) {
-  if (secret->pad != KECCAK_SECRET_PAD_A) {
-    KECCAK_SECRET_finish(secret, KECCAK_SECRET_NR_STEP);
-    secret->pad = KECCAK_SECRET_PAD_A;
-  }
-  KECCAK_absorb(&secret->state, KECCAK_SECRET_RATE, KECCAK_SECRET_NR_STEP, buff,
-                buff_length);
-}
-
-void KECCAK_SECRET_encrypt_B(KECCAK_SECRET_t *secret, void *buff,
-                             uint8_t buff_length) {
-  if (secret->pad != KECCAK_SECRET_PAD_BC) {
-    KECCAK_SECRET_finish(secret, KECCAK_SECRET_NR_STEP);
-    secret->pad = KECCAK_SECRET_PAD_BC;
-  }
-  KECCAK_encrypt(&secret->state, KECCAK_SECRET_RATE, KECCAK_SECRET_NR_STEP,
-                 buff, buff_length);
-}
-
-void KECCAK_SECRET_decrypt_C(KECCAK_SECRET_t *secret, void *buff,
-                             uint8_t buff_length) {
-  if (secret->pad != KECCAK_SECRET_PAD_BC) {
-    KECCAK_SECRET_finish(secret, KECCAK_SECRET_NR_STEP);
-    secret->pad = KECCAK_SECRET_PAD_BC;
-  }
-  KECCAK_decrypt(&secret->state, KECCAK_SECRET_RATE, KECCAK_SECRET_NR_STEP,
-                 buff, buff_length);
-}
-
-void KECCAK_SECRET_squeeze_D(KECCAK_SECRET_t *secret, void *buff,
-                             uint8_t buff_length) {
-  if (secret->pad != KECCAK_SECRET_PAD_D) {
-    KECCAK_SECRET_finish(secret, KECCAK_SECRET_NR_STRIDE);
-    secret->pad = KECCAK_SECRET_PAD_D;
-  }
-  KECCAK_squeeze(&secret->state, KECCAK_SECRET_RATE, KECCAK_SECRET_NR_STEP,
-                 buff, buff_length);
-}
-
-uint8_t KECCAK_SECRET_verify_D(KECCAK_SECRET_t *secret, void *buff,
-                               uint8_t buff_length) {
-  uint8_t *buff_ = buff;
+  uint8_t *u8_ptr = buff_ptr;
   uint8_t retval;
 
-  if (secret->pad != KECCAK_SECRET_PAD_D) {
-    KECCAK_SECRET_finish(secret, KECCAK_SECRET_NR_STRIDE);
-    secret->pad = KECCAK_SECRET_PAD_D;
+  if (secret_ptr->pad != KECCAK_SECRET_PAD_D) {
+    KeccakSecretFinish(secret_ptr, KECCAK_SECRET_NR_STRIDE);
+    secret_ptr->pad = KECCAK_SECRET_PAD_D;
   }
-  KECCAK_decrypt(&secret->state, KECCAK_SECRET_RATE, KECCAK_SECRET_NR_STEP,
-                 buff_, buff_length);
+  KeccakDecrypt(&secret_ptr->state, KECCAK_SECRET_RATE, KECCAK_SECRET_NR_STEP,
+                u8_ptr, buff_length);
 
   retval = 1;
   while (buff_length-- > 0)
-    retval &= (*buff_++ == 0);
+    retval &= (*u8_ptr++ == 0);
   return retval;
 }

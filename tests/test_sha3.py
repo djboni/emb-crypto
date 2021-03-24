@@ -51,14 +51,14 @@ class TestSHA3_512(unittest.TestCase):
     data = b'\x00' * length
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHA3_512_t[1]')
+    phash_ = ffi.new('struct sha3_512_t[1]')
     hash_ = phash_[0]
 
-    module.SHA3_512_init(phash_)
-    module.SHA3_512_update(phash_, data, length)
-    module.SHA3_512_finish(phash_)
+    module.SHA3_512Init(phash_)
+    module.SHA3_512Update(phash_, data, length)
+    module.SHA3_512Finish(phash_)
 
-    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = ffi.buffer(hash_.hash.a, hash_length)
     hash_module = hash_module[:]
 
     hash_reference = hashlib.sha3_512(data).digest()
@@ -71,14 +71,14 @@ class TestSHA3_512(unittest.TestCase):
     data = b'\x00' * length
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHA3_512_t[1]')
+    phash_ = ffi.new('struct sha3_512_t[1]')
     hash_ = phash_[0]
 
-    module.SHA3_512_init(phash_)
-    module.SHA3_512_update(phash_, data, length)
-    module.SHA3_512_finish(phash_)
+    module.SHA3_512Init(phash_)
+    module.SHA3_512Update(phash_, data, length)
+    module.SHA3_512Finish(phash_)
 
-    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = ffi.buffer(hash_.hash.a, hash_length)
     hash_module = hash_module[:]
 
     hash_reference = hashlib.sha3_512(data).digest()
@@ -91,14 +91,14 @@ class TestSHA3_512(unittest.TestCase):
     data = b'\x00' * length
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHA3_512_t[1]')
+    phash_ = ffi.new('struct sha3_512_t[1]')
     hash_ = phash_[0]
 
-    module.SHA3_512_init(phash_)
-    module.SHA3_512_update(phash_, data, length)
-    module.SHA3_512_finish(phash_)
+    module.SHA3_512Init(phash_)
+    module.SHA3_512Update(phash_, data, length)
+    module.SHA3_512Finish(phash_)
 
-    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = ffi.buffer(hash_.hash.a, hash_length)
     hash_module = hash_module[:]
 
     hash_reference = hashlib.sha3_512(data).digest()
@@ -111,14 +111,14 @@ class TestSHA3_512(unittest.TestCase):
     data = os.urandom(length)
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHA3_512_t[1]')
+    phash_ = ffi.new('struct sha3_512_t[1]')
     hash_ = phash_[0]
 
-    module.SHA3_512_init(phash_)
-    module.SHA3_512_update(phash_, data, length)
-    module.SHA3_512_finish(phash_)
+    module.SHA3_512Init(phash_)
+    module.SHA3_512Update(phash_, data, length)
+    module.SHA3_512Finish(phash_)
 
-    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = ffi.buffer(hash_.hash.a, hash_length)
     hash_module = hash_module[:]
 
     hash_reference = hashlib.sha3_512(data).digest()
@@ -133,14 +133,14 @@ class TestSHA3_384(unittest.TestCase):
     data = b'\x00' * length
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHA3_384_t[1]')
+    phash_ = ffi.new('struct sha3_384_t[1]')
     hash_ = phash_[0]
 
-    module.SHA3_384_init(phash_)
-    module.SHA3_384_update(phash_, data, length)
-    module.SHA3_384_finish(phash_)
+    module.SHA3_384Init(phash_)
+    module.SHA3_384Update(phash_, data, length)
+    module.SHA3_384Finish(phash_)
 
-    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = ffi.buffer(hash_.hash.a, hash_length)
     hash_module = hash_module[:]
 
     hash_reference = hashlib.sha3_384(data).digest()
@@ -153,14 +153,14 @@ class TestSHA3_384(unittest.TestCase):
     data = b'\x00' * length
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHA3_384_t[1]')
+    phash_ = ffi.new('struct sha3_384_t[1]')
     hash_ = phash_[0]
 
-    module.SHA3_384_init(phash_)
-    module.SHA3_384_update(phash_, data, length)
-    module.SHA3_384_finish(phash_)
+    module.SHA3_384Init(phash_)
+    module.SHA3_384Update(phash_, data, length)
+    module.SHA3_384Finish(phash_)
 
-    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = ffi.buffer(hash_.hash.a, hash_length)
     hash_module = hash_module[:]
 
     hash_reference = hashlib.sha3_384(data).digest()
@@ -173,14 +173,14 @@ class TestSHA3_384(unittest.TestCase):
     data = b'\x00' * length
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHA3_384_t[1]')
+    phash_ = ffi.new('struct sha3_384_t[1]')
     hash_ = phash_[0]
 
-    module.SHA3_384_init(phash_)
-    module.SHA3_384_update(phash_, data, length)
-    module.SHA3_384_finish(phash_)
+    module.SHA3_384Init(phash_)
+    module.SHA3_384Update(phash_, data, length)
+    module.SHA3_384Finish(phash_)
 
-    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = ffi.buffer(hash_.hash.a, hash_length)
     hash_module = hash_module[:]
 
     hash_reference = hashlib.sha3_384(data).digest()
@@ -193,14 +193,14 @@ class TestSHA3_384(unittest.TestCase):
     data = os.urandom(length)
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHA3_384_t[1]')
+    phash_ = ffi.new('struct sha3_384_t[1]')
     hash_ = phash_[0]
 
-    module.SHA3_384_init(phash_)
-    module.SHA3_384_update(phash_, data, length)
-    module.SHA3_384_finish(phash_)
+    module.SHA3_384Init(phash_)
+    module.SHA3_384Update(phash_, data, length)
+    module.SHA3_384Finish(phash_)
 
-    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = ffi.buffer(hash_.hash.a, hash_length)
     hash_module = hash_module[:]
 
     hash_reference = hashlib.sha3_384(data).digest()
@@ -215,14 +215,14 @@ class TestSHA3_256(unittest.TestCase):
     data = b'\x00' * length
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHA3_256_t[1]')
+    phash_ = ffi.new('struct sha3_256_t[1]')
     hash_ = phash_[0]
 
-    module.SHA3_256_init(phash_)
-    module.SHA3_256_update(phash_, data, length)
-    module.SHA3_256_finish(phash_)
+    module.SHA3_256Init(phash_)
+    module.SHA3_256Update(phash_, data, length)
+    module.SHA3_256Finish(phash_)
 
-    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = ffi.buffer(hash_.hash.a, hash_length)
     hash_module = hash_module[:]
 
     hash_reference = hashlib.sha3_256(data).digest()
@@ -235,14 +235,14 @@ class TestSHA3_256(unittest.TestCase):
     data = b'\x00' * length
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHA3_256_t[1]')
+    phash_ = ffi.new('struct sha3_256_t[1]')
     hash_ = phash_[0]
 
-    module.SHA3_256_init(phash_)
-    module.SHA3_256_update(phash_, data, length)
-    module.SHA3_256_finish(phash_)
+    module.SHA3_256Init(phash_)
+    module.SHA3_256Update(phash_, data, length)
+    module.SHA3_256Finish(phash_)
 
-    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = ffi.buffer(hash_.hash.a, hash_length)
     hash_module = hash_module[:]
 
     hash_reference = hashlib.sha3_256(data).digest()
@@ -255,14 +255,14 @@ class TestSHA3_256(unittest.TestCase):
     data = b'\x00' * length
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHA3_256_t[1]')
+    phash_ = ffi.new('struct sha3_256_t[1]')
     hash_ = phash_[0]
 
-    module.SHA3_256_init(phash_)
-    module.SHA3_256_update(phash_, data, length)
-    module.SHA3_256_finish(phash_)
+    module.SHA3_256Init(phash_)
+    module.SHA3_256Update(phash_, data, length)
+    module.SHA3_256Finish(phash_)
 
-    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = ffi.buffer(hash_.hash.a, hash_length)
     hash_module = hash_module[:]
 
     hash_reference = hashlib.sha3_256(data).digest()
@@ -275,14 +275,14 @@ class TestSHA3_256(unittest.TestCase):
     data = os.urandom(length)
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHA3_256_t[1]')
+    phash_ = ffi.new('struct sha3_256_t[1]')
     hash_ = phash_[0]
 
-    module.SHA3_256_init(phash_)
-    module.SHA3_256_update(phash_, data, length)
-    module.SHA3_256_finish(phash_)
+    module.SHA3_256Init(phash_)
+    module.SHA3_256Update(phash_, data, length)
+    module.SHA3_256Finish(phash_)
 
-    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = ffi.buffer(hash_.hash.a, hash_length)
     hash_module = hash_module[:]
 
     hash_reference = hashlib.sha3_256(data).digest()
@@ -297,14 +297,14 @@ class TestSHA3_224(unittest.TestCase):
     data = b'\x00' * length
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHA3_224_t[1]')
+    phash_ = ffi.new('struct sha3_224_t[1]')
     hash_ = phash_[0]
 
-    module.SHA3_224_init(phash_)
-    module.SHA3_224_update(phash_, data, length)
-    module.SHA3_224_finish(phash_)
+    module.SHA3_224Init(phash_)
+    module.SHA3_224Update(phash_, data, length)
+    module.SHA3_224Finish(phash_)
 
-    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = ffi.buffer(hash_.hash.a, hash_length)
     hash_module = hash_module[:]
 
     hash_reference = hashlib.sha3_224(data).digest()
@@ -317,14 +317,14 @@ class TestSHA3_224(unittest.TestCase):
     data = b'\x00' * length
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHA3_224_t[1]')
+    phash_ = ffi.new('struct sha3_224_t[1]')
     hash_ = phash_[0]
 
-    module.SHA3_224_init(phash_)
-    module.SHA3_224_update(phash_, data, length)
-    module.SHA3_224_finish(phash_)
+    module.SHA3_224Init(phash_)
+    module.SHA3_224Update(phash_, data, length)
+    module.SHA3_224Finish(phash_)
 
-    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = ffi.buffer(hash_.hash.a, hash_length)
     hash_module = hash_module[:]
 
     hash_reference = hashlib.sha3_224(data).digest()
@@ -337,14 +337,14 @@ class TestSHA3_224(unittest.TestCase):
     data = b'\x00' * length
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHA3_224_t[1]')
+    phash_ = ffi.new('struct sha3_224_t[1]')
     hash_ = phash_[0]
 
-    module.SHA3_224_init(phash_)
-    module.SHA3_224_update(phash_, data, length)
-    module.SHA3_224_finish(phash_)
+    module.SHA3_224Init(phash_)
+    module.SHA3_224Update(phash_, data, length)
+    module.SHA3_224Finish(phash_)
 
-    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = ffi.buffer(hash_.hash.a, hash_length)
     hash_module = hash_module[:]
 
     hash_reference = hashlib.sha3_224(data).digest()
@@ -357,14 +357,14 @@ class TestSHA3_224(unittest.TestCase):
     data = os.urandom(length)
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHA3_224_t[1]')
+    phash_ = ffi.new('struct sha3_224_t[1]')
     hash_ = phash_[0]
 
-    module.SHA3_224_init(phash_)
-    module.SHA3_224_update(phash_, data, length)
-    module.SHA3_224_finish(phash_)
+    module.SHA3_224Init(phash_)
+    module.SHA3_224Update(phash_, data, length)
+    module.SHA3_224Finish(phash_)
 
-    hash_module = ffi.buffer(hash_.hash.A, hash_length)
+    hash_module = ffi.buffer(hash_.hash.a, hash_length)
     hash_module = hash_module[:]
 
     hash_reference = hashlib.sha3_224(data).digest()
@@ -379,14 +379,14 @@ class TestSHAKE_256(unittest.TestCase):
     data = b'\x00' * length
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHAKE_256_t[1]')
+    phash_ = ffi.new('struct shake_256_t[1]')
     hash_ = phash_[0]
 
     hash_module = b'\x00' * hash_length
-    module.SHAKE_256_init(phash_)
-    module.SHAKE_256_absorb(phash_, data, length)
-    module.SHAKE_256_finish(phash_)
-    module.SHAKE_256_squeeze(phash_, hash_module, hash_length)
+    module.SHAKE256Init(phash_)
+    module.SHAKE256Absorb(phash_, data, length)
+    module.SHAKE256Finish(phash_)
+    module.SHAKE256Squeeze(phash_, hash_module, hash_length)
 
     hash_reference = hashlib.shake_256(data).digest(hash_length)
 
@@ -398,14 +398,14 @@ class TestSHAKE_256(unittest.TestCase):
     data = b'\x00' * length
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHAKE_256_t[1]')
+    phash_ = ffi.new('struct shake_256_t[1]')
     hash_ = phash_[0]
 
     hash_module = b'\x00' * hash_length
-    module.SHAKE_256_init(phash_)
-    module.SHAKE_256_absorb(phash_, data, length)
-    module.SHAKE_256_finish(phash_)
-    module.SHAKE_256_squeeze(phash_, hash_module, hash_length)
+    module.SHAKE256Init(phash_)
+    module.SHAKE256Absorb(phash_, data, length)
+    module.SHAKE256Finish(phash_)
+    module.SHAKE256Squeeze(phash_, hash_module, hash_length)
 
     hash_reference = hashlib.shake_256(data).digest(hash_length)
 
@@ -417,14 +417,14 @@ class TestSHAKE_256(unittest.TestCase):
     data = b'\x00' * length
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHAKE_256_t[1]')
+    phash_ = ffi.new('struct shake_256_t[1]')
     hash_ = phash_[0]
 
     hash_module = b'\x00' * hash_length
-    module.SHAKE_256_init(phash_)
-    module.SHAKE_256_absorb(phash_, data, length)
-    module.SHAKE_256_finish(phash_)
-    module.SHAKE_256_squeeze(phash_, hash_module, hash_length)
+    module.SHAKE256Init(phash_)
+    module.SHAKE256Absorb(phash_, data, length)
+    module.SHAKE256Finish(phash_)
+    module.SHAKE256Squeeze(phash_, hash_module, hash_length)
 
     hash_reference = hashlib.shake_256(data).digest(hash_length)
 
@@ -436,14 +436,14 @@ class TestSHAKE_256(unittest.TestCase):
     data = os.urandom(length)
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHAKE_256_t[1]')
+    phash_ = ffi.new('struct shake_256_t[1]')
     hash_ = phash_[0]
 
     hash_module = b'\x00' * hash_length
-    module.SHAKE_256_init(phash_)
-    module.SHAKE_256_absorb(phash_, data, length)
-    module.SHAKE_256_finish(phash_)
-    module.SHAKE_256_squeeze(phash_, hash_module, hash_length)
+    module.SHAKE256Init(phash_)
+    module.SHAKE256Absorb(phash_, data, length)
+    module.SHAKE256Finish(phash_)
+    module.SHAKE256Squeeze(phash_, hash_module, hash_length)
 
     hash_reference = hashlib.shake_256(data).digest(hash_length)
 
@@ -457,14 +457,14 @@ class TestSHAKE_128(unittest.TestCase):
     data = b'\x00' * length
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHAKE_128_t[1]')
+    phash_ = ffi.new('struct shake_128_t[1]')
     hash_ = phash_[0]
 
     hash_module = b'\x00' * hash_length
-    module.SHAKE_128_init(phash_)
-    module.SHAKE_128_absorb(phash_, data, length)
-    module.SHAKE_128_finish(phash_)
-    module.SHAKE_128_squeeze(phash_, hash_module, hash_length)
+    module.SHAKE128Init(phash_)
+    module.SHAKE128Absorb(phash_, data, length)
+    module.SHAKE128Finish(phash_)
+    module.SHAKE128Squeeze(phash_, hash_module, hash_length)
 
     hash_reference = hashlib.shake_128(data).digest(hash_length)
 
@@ -476,14 +476,14 @@ class TestSHAKE_128(unittest.TestCase):
     data = b'\x00' * length
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHAKE_128_t[1]')
+    phash_ = ffi.new('struct shake_128_t[1]')
     hash_ = phash_[0]
 
     hash_module = b'\x00' * hash_length
-    module.SHAKE_128_init(phash_)
-    module.SHAKE_128_absorb(phash_, data, length)
-    module.SHAKE_128_finish(phash_)
-    module.SHAKE_128_squeeze(phash_, hash_module, hash_length)
+    module.SHAKE128Init(phash_)
+    module.SHAKE128Absorb(phash_, data, length)
+    module.SHAKE128Finish(phash_)
+    module.SHAKE128Squeeze(phash_, hash_module, hash_length)
 
     hash_reference = hashlib.shake_128(data).digest(hash_length)
 
@@ -495,14 +495,14 @@ class TestSHAKE_128(unittest.TestCase):
     data = b'\x00' * length
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHAKE_128_t[1]')
+    phash_ = ffi.new('struct shake_128_t[1]')
     hash_ = phash_[0]
 
     hash_module = b'\x00' * hash_length
-    module.SHAKE_128_init(phash_)
-    module.SHAKE_128_absorb(phash_, data, length)
-    module.SHAKE_128_finish(phash_)
-    module.SHAKE_128_squeeze(phash_, hash_module, hash_length)
+    module.SHAKE128Init(phash_)
+    module.SHAKE128Absorb(phash_, data, length)
+    module.SHAKE128Finish(phash_)
+    module.SHAKE128Squeeze(phash_, hash_module, hash_length)
 
     hash_reference = hashlib.shake_128(data).digest(hash_length)
 
@@ -514,18 +514,18 @@ class TestSHAKE_128(unittest.TestCase):
     data = os.urandom(length)
     hash_length = HASH_BITS // 8
 
-    phash_ = ffi.new('struct SHAKE_128_t[1]')
+    phash_ = ffi.new('struct shake_128_t[1]')
     hash_ = phash_[0]
 
     hash_module = b'\x00' * hash_length
-    module.SHAKE_128_init(phash_)
-    module.SHAKE_128_absorb(phash_, data, length)
-    module.SHAKE_128_finish(phash_)
-    module.SHAKE_128_squeeze(phash_, hash_module, hash_length)
+    module.SHAKE128Init(phash_)
+    module.SHAKE128Absorb(phash_, data, length)
+    module.SHAKE128Finish(phash_)
+    module.SHAKE128Squeeze(phash_, hash_module, hash_length)
 
     hash_reference = hashlib.shake_128(data).digest(hash_length)
 
     self.assertEqual(hash_module, hash_reference)
-    
+
 if __name__ == '__main__':
   unittest.main()

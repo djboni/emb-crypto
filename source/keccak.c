@@ -18,95 +18,96 @@
 
 #include "keccak.h"
 
-typedef void (*function_process_data)(uint8_t *state, uint8_t *buff);
+typedef void (*function_process_data)(uint8_t *state_ptr, uint8_t *buff_ptr);
 
-void KECCAK_init(struct KECCAK_t *state) {
-  uint8_t *A = (uint8_t *)&state->A[0], i;
-  for (i = 0; i < sizeof(*state); i++) {
-    A[i] = 0;
+void KeccakInit(struct keccak_t *state_ptr) {
+  uint8_t *a_ptr = (uint8_t *)&state_ptr->a[0], i;
+  for (i = 0; i < sizeof(*state_ptr); i++) {
+    a_ptr[i] = 0;
   }
 }
 
-static void function_absorb(uint8_t *state, const uint8_t *buff) {
-  *state ^= *buff;
+static void FunctionAbsorb(uint8_t *state_ptr, const uint8_t *buff_ptr) {
+  *state_ptr ^= *buff_ptr;
 }
 
-void KECCAK_absorb(struct KECCAK_t *state, uint8_t rate, uint8_t rounds,
-                   const void *buff, uint16_t num) {
-  KECCAK_process_data(state, rate, rounds, (uint8_t *)buff, num,
-                      (function_process_data)function_absorb);
+void KeccakAbsorb(struct keccak_t *state_ptr, uint8_t rate, uint8_t rounds,
+                  const void *buff_ptr, uint16_t num) {
+  KeccakProcessData(state_ptr, rate, rounds, (uint8_t *)buff_ptr, num,
+                    (function_process_data)FunctionAbsorb);
 }
 
-void KECCAK_finish(struct KECCAK_t *state, uint8_t rate, uint8_t rounds,
-                   uint8_t pad_byte) {
-  uint8_t *A = (uint8_t *)&state->A[0];
+void KeccakFinish(struct keccak_t *state_ptr, uint8_t rate, uint8_t rounds,
+                  uint8_t pad_byte) {
+  uint8_t *a_ptr = (uint8_t *)&state_ptr->a[0];
 
   /* Pad block. */
-  A[state->num] ^= pad_byte;
-  A[rate - 1] ^= KECCAK_PAD_END;
+  a_ptr[state_ptr->num] ^= pad_byte;
+  a_ptr[rate - 1] ^= KECCAK_PAD_END;
 
-  KECCAK_f(state, rounds);
+  KeccakF(state_ptr, rounds);
 }
 
-static void function_squeeze(const uint8_t *state, uint8_t *buff) {
-  *buff = *state;
+static void FunctionSqueeze(const uint8_t *state_ptr, uint8_t *buff_ptr) {
+  *buff_ptr = *state_ptr;
 }
 
-void KECCAK_squeeze(struct KECCAK_t *state, uint8_t rate, uint8_t rounds,
-                    void *buff, uint16_t num) {
-  KECCAK_process_data(state, rate, rounds, buff, num,
-                      (function_process_data)function_squeeze);
+void KeccakSqueeze(struct keccak_t *state_ptr, uint8_t rate, uint8_t rounds,
+                   void *buff_ptr, uint16_t num) {
+  KeccakProcessData(state_ptr, rate, rounds, buff_ptr, num,
+                    (function_process_data)FunctionSqueeze);
 }
 
-static void function_encrypt(uint8_t *state, uint8_t *buff) {
-  uint8_t encrypted = *state ^ *buff;
-  *state = encrypted;
-  *buff = encrypted;
+static void FunctionEncrypt(uint8_t *state_ptr, uint8_t *buff_ptr) {
+  uint8_t encrypted = *state_ptr ^ *buff_ptr;
+  *state_ptr = encrypted;
+  *buff_ptr = encrypted;
 }
 
-void KECCAK_encrypt(struct KECCAK_t *state, uint8_t rate, uint8_t rounds,
-                    void *buff, uint16_t num) {
-  KECCAK_process_data(state, rate, rounds, buff, num, function_encrypt);
+void KeccakEncrypt(struct keccak_t *state_ptr, uint8_t rate, uint8_t rounds,
+                   void *buff_ptr, uint16_t num) {
+  KeccakProcessData(state_ptr, rate, rounds, buff_ptr, num, FunctionEncrypt);
 }
 
-static void function_decrypt(uint8_t *state, uint8_t *buff) {
-  uint8_t decrypted = *state ^ *buff;
-  *state = *buff;
-  *buff = decrypted;
+static void FunctionDecrypt(uint8_t *state_ptr, uint8_t *buff_ptr) {
+  uint8_t decrypted = *state_ptr ^ *buff_ptr;
+  *state_ptr = *buff_ptr;
+  *buff_ptr = decrypted;
 }
 
-void KECCAK_decrypt(struct KECCAK_t *state, uint8_t rate, uint8_t rounds,
-                    void *buff, uint16_t num) {
-  KECCAK_process_data(state, rate, rounds, buff, num, function_decrypt);
+void KeccakDecrypt(struct keccak_t *state_ptr, uint8_t rate, uint8_t rounds,
+                   void *buff_ptr, uint16_t num) {
+  KeccakProcessData(state_ptr, rate, rounds, buff_ptr, num, FunctionDecrypt);
 }
 
-void KECCAK_process_data(struct KECCAK_t *state, uint8_t rate, uint8_t rounds,
-                         void *buff, uint16_t num,
-                         void (*function)(uint8_t *state, uint8_t *buff)) {
-  uint8_t statenum = state->num;
-  uint8_t *in = buff;
-  uint8_t *out = ((uint8_t *)&state->A[0]) + statenum;
+void KeccakProcessData(struct keccak_t *state_ptr, uint8_t rate, uint8_t rounds,
+                       void *buff_ptr, uint16_t num,
+                       void (*function_ptr)(uint8_t *state_ptr,
+                                            uint8_t *buff_ptr)) {
+  uint8_t statenum = state_ptr->num;
+  uint8_t *in_ptr = buff_ptr;
+  uint8_t *out_ptr = ((uint8_t *)&state_ptr->a[0]) + statenum;
 
   while (num-- > 0) {
-    function(out++, in++);
+    function_ptr(out_ptr++, in_ptr++);
 
     if (++statenum >= rate) {
       /* Block complete. */
-      KECCAK_f(state, rounds);
+      KeccakF(state_ptr, rounds);
       statenum = 0;
-      out = (uint8_t *)&state->A[0];
+      out_ptr = (uint8_t *)&state_ptr->a[0];
     }
   }
-  state->num = statenum;
+  state_ptr->num = statenum;
 }
 
-static void KECCAK_f_round(struct KECCAK_t *state, uint8_t round);
+static void KeccakFRound(struct keccak_t *state_ptr, uint8_t round);
 
-void KECCAK_f(struct KECCAK_t *state, uint8_t rounds) {
+void KeccakF(struct keccak_t *state_ptr, uint8_t rounds) {
   uint8_t i;
   for (i = KECCAK_NR - rounds; i < KECCAK_NR; ++i)
-    KECCAK_f_round(state, i);
-  state->num = 0;
+    KeccakFRound(state_ptr, i);
+  state_ptr->num = 0;
 }
 
 #ifdef AVR
@@ -159,35 +160,35 @@ static uint64_t pgm_read_qword(const void *address) {
 #endif
 
 PROGMEM
-static const KECCAK_uint Krc[KECCAK_NR] = {0x0000000000000001 & Krcm,
-                                           0x0000000000008082 & Krcm,
-                                           0x800000000000808A & Krcm,
-                                           0x8000000080008000 & Krcm,
-                                           0x000000000000808B & Krcm,
-                                           0x0000000080000001 & Krcm,
-                                           0x8000000080008081 & Krcm,
-                                           0x8000000000008009 & Krcm,
-                                           0x000000000000008A & Krcm,
-                                           0x0000000000000088 & Krcm,
-                                           0x0000000080008009 & Krcm,
-                                           0x000000008000000A & Krcm,
-                                           0x000000008000808B & Krcm,
-                                           0x800000000000008B & Krcm,
-                                           0x8000000000008089 & Krcm,
-                                           0x8000000000008003 & Krcm,
-                                           0x8000000000008002 & Krcm,
-                                           0x8000000000000080 & Krcm,
+static const keccak_uint_t Krc[KECCAK_NR] = {0x0000000000000001 & Krcm,
+                                             0x0000000000008082 & Krcm,
+                                             0x800000000000808A & Krcm,
+                                             0x8000000080008000 & Krcm,
+                                             0x000000000000808B & Krcm,
+                                             0x0000000080000001 & Krcm,
+                                             0x8000000080008081 & Krcm,
+                                             0x8000000000008009 & Krcm,
+                                             0x000000000000008A & Krcm,
+                                             0x0000000000000088 & Krcm,
+                                             0x0000000080008009 & Krcm,
+                                             0x000000008000000A & Krcm,
+                                             0x000000008000808B & Krcm,
+                                             0x800000000000008B & Krcm,
+                                             0x8000000000008089 & Krcm,
+                                             0x8000000000008003 & Krcm,
+                                             0x8000000000008002 & Krcm,
+                                             0x8000000000000080 & Krcm,
 #if KECCAK_WORD >= 2
-                                           0x000000000000800A & Krcm,
-                                           0x800000008000000A & Krcm,
+                                             0x000000000000800A & Krcm,
+                                             0x800000008000000A & Krcm,
 #endif
 #if KECCAK_WORD >= 4
-                                           0x8000000080008081 & Krcm,
-                                           0x8000000000008080 & Krcm,
+                                             0x8000000080008081 & Krcm,
+                                             0x8000000000008080 & Krcm,
 #endif
 #if KECCAK_WORD >= 8
-                                           0x0000000080000001 & Krcm,
-                                           0x8000000080008008 & Krcm
+                                             0x0000000080000001 & Krcm,
+                                             0x8000000080008008 & Krcm
 #endif
 };
 
@@ -212,7 +213,7 @@ static const uint8_t Kiip2[25] = {2,  3,  4,  0,  1,  7,  8,  9,  5,
                                   6,  12, 13, 14, 10, 11, 17, 18, 19,
                                   15, 16, 22, 23, 24, 20, 21};
 
-static KECCAK_uint rot(KECCAK_uint x, uint8_t n) {
+static keccak_uint_t Rot(keccak_uint_t x, uint8_t n) {
 #if (KECCAK_WORD == 1 && KECCAK_FASTER != 0)
   /* On AVR this is faster for KECCAK_WORD == 1. */
   if (n == 0)
@@ -258,21 +259,22 @@ static KECCAK_uint rot(KECCAK_uint x, uint8_t n) {
 #endif
 }
 
-static void KECCAK_f_round(struct KECCAK_t *state, uint8_t round) {
+static void KeccakFRound(struct keccak_t *state_ptr, uint8_t round) {
   uint8_t i, im1, ip1, jt5;
-  KECCAK_uint B[25], C[5], D;
+  keccak_uint_t b[25], c[5], d;
 
   /* Theta Rho Pi */
   for (i = 0; i < 5; ++i) {
-    C[i] = (state->A[i] ^ state->A[5 + i] ^ state->A[10 + i] ^
-            state->A[15 + i] ^ state->A[20 + i]);
+    c[i] = (state_ptr->a[i] ^ state_ptr->a[5 + i] ^ state_ptr->a[10 + i] ^
+            state_ptr->a[15 + i] ^ state_ptr->a[20 + i]);
   }
   for (i = 0, im1 = 4, ip1 = 1; i < 5; ++i) {
-    D = C[im1] ^ rot(C[ip1], 1);
+    d = c[im1] ^ Rot(c[ip1], 1);
 
     for (jt5 = 0; jt5 < 25; jt5 += 5) {
       uint8_t k = jt5 + i;
-      B[pgm_read_byte(&Kpi[k])] = rot(state->A[k] ^ D, pgm_read_byte(&Krho[k]));
+      b[pgm_read_byte(&Kpi[k])] =
+          Rot(state_ptr->a[k] ^ d, pgm_read_byte(&Krho[k]));
     }
 
     if (++im1 >= 5)
@@ -283,10 +285,10 @@ static void KECCAK_f_round(struct KECCAK_t *state, uint8_t round) {
 
   /* Chi */
   for (i = 0; i < 25; ++i) {
-    state->A[i] =
-        B[i] ^ ((~B[pgm_read_byte(&Kiip1[i])]) & B[pgm_read_byte(&Kiip2[i])]);
+    state_ptr->a[i] =
+        b[i] ^ ((~b[pgm_read_byte(&Kiip1[i])]) & b[pgm_read_byte(&Kiip2[i])]);
   }
 
   /* Iota */
-  state->A[0] ^= pgm_read_KECCAK_WORD(&Krc[round]);
+  state_ptr->a[0] ^= pgm_read_KECCAK_WORD(&Krc[round]);
 }

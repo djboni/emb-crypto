@@ -27,7 +27,7 @@ extern "C" {
 
 #include "keccak.h"
 
-enum KECCAK_SECRET_CONFIG_t {
+enum keccak_secret_config_t {
 /* Octave
  * Size (bytes)       Capacity/Security (bytes) Rate (bytes)
  * b=[25 50 100 200], c=min(32,floor((b-1)/2)), r=b-c
@@ -79,33 +79,33 @@ enum KECCAK_SECRET_CONFIG_t {
 #endif
 };
 
-enum KECCAK_SECRET_PAD_t {
+enum keccak_secret_pad_t {
   KECCAK_SECRET_PAD_K = 0x3F,  /* 11111110* Key. */
   KECCAK_SECRET_PAD_A = 0x3E,  /* 01111110* Associated data. */
   KECCAK_SECRET_PAD_BC = 0x3D, /* 10111110* Plaintext/Ciphertext. */
   KECCAK_SECRET_PAD_D = 0x3C   /* 00111110* Authentication tag. */
 };
 
-typedef struct KECCAK_SECRET_t {
-  struct KECCAK_t state;
+struct keccak_secret_t {
+  struct keccak_t state;
   uint8_t pad;
-} KECCAK_SECRET_t;
+};
 
-void KECCAK_SECRET_init(KECCAK_SECRET_t *secret, const void *key,
-                        uint8_t key_length);
+void KeccakSecretInit(struct keccak_secret_t *secret_ptr, const void *key_ptr,
+                      uint8_t key_length);
 
-void KECCAK_SECRET_absorb_A(KECCAK_SECRET_t *secret, const void *buff,
+void KeccakSecretAbsorbA(struct keccak_secret_t *secret_ptr,
+                         const void *buff_ptr, uint8_t buff_length);
+
+void KeccakSecretEncryptB(struct keccak_secret_t *secret_ptr, void *buff_ptr,
+                          uint8_t buff_length);
+void KeccakSecretDecryptC(struct keccak_secret_t *secret_ptr, void *buff_ptr,
+                          uint8_t buff_length);
+
+void KeccakSecretSqueezeD(struct keccak_secret_t *secret_ptr, void *buff_ptr,
+                          uint8_t buff_length);
+uint8_t KeccakSecretVerifyD(struct keccak_secret_t *secret_ptr, void *buff_ptr,
                             uint8_t buff_length);
-
-void KECCAK_SECRET_encrypt_B(KECCAK_SECRET_t *secret, void *buff,
-                             uint8_t buff_length);
-void KECCAK_SECRET_decrypt_C(KECCAK_SECRET_t *secret, void *buff,
-                             uint8_t buff_length);
-
-void KECCAK_SECRET_squeeze_D(KECCAK_SECRET_t *secret, void *buff,
-                             uint8_t buff_length);
-uint8_t KECCAK_SECRET_verify_D(KECCAK_SECRET_t *secret, void *buff,
-                               uint8_t buff_length);
 
 #ifdef __cplusplus
 }

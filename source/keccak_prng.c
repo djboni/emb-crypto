@@ -32,13 +32,13 @@
 
 /*
  * If the PRNG is DETERMINISTIC (KECCAK_PRNG_DEBUG == 1) the state
- * will be zeroed at the start of seed(), and data in buff at the start of
+ * will be zeroed at the start of seed(), and data in buff_ptr at the start of
  * random() is NOT inserted into the entropy pool.
  *
  * A DETERMINISTIC PRNG is useful for testing software (with test vectors).
  * In general, if you actually need a DETERMINISTIC PRNG use KECCAK_XOF instead.
  *
- * Things you can send into the entropy pool via buff when calling seed() or
+ * Things you can send into the entropy pool via buff_ptr when calling seed() or
  * random():
  *
  * - Anything that is unpredictible to an attacker.
@@ -53,27 +53,32 @@
  */
 
 #if defined(KECCAK_PRNG_DEBUG) && KECCAK_PRNG_DEBUG == 1
-struct KECCAK_t KECCAK_PRNG_entropy __attribute__((section(".noinit")));
+struct keccak_t Keccak_Prng_Entropy __attribute__((section(".noinit")));
 #else
-static struct KECCAK_t KECCAK_PRNG_entropy __attribute__((section(".noinit")));
+static struct keccak_t keccak_prng_entropy __attribute__((section(".noinit")));
 #endif
 
-void KECCAK_PRNG_seed(const void *buff, uint8_t num) {
+void KeccakPrngSeed(const void *buff_ptr, uint8_t num) {
 #if defined(KECCAK_PRNG_DEBUG) && KECCAK_PRNG_DEBUG == 1
-  KECCAK_init(&KECCAK_PRNG_entropy);
+  KeccakInit(&Keccak_Prng_Entropy);
+  KeccakAbsorb(&Keccak_Prng_Entropy, KECCAK_STATE_SIZE, KECCAK_PRNG_NR_STEP,
+               buff_ptr, num);
+  KeccakFinish(&Keccak_Prng_Entropy, KECCAK_STATE_SIZE, KECCAK_PRNG_NR_START,
+               KECCAK_PAD_MULTIRATE);
+#else
+  KeccakAbsorb(&keccak_prng_entropy, KECCAK_STATE_SIZE, KECCAK_PRNG_NR_STEP,
+               buff_ptr, num);
+  KeccakFinish(&keccak_prng_entropy, KECCAK_STATE_SIZE, KECCAK_PRNG_NR_START,
+               KECCAK_PAD_MULTIRATE);
 #endif
-  KECCAK_absorb(&KECCAK_PRNG_entropy, KECCAK_STATE_SIZE, KECCAK_PRNG_NR_STEP,
-                buff, num);
-  KECCAK_finish(&KECCAK_PRNG_entropy, KECCAK_STATE_SIZE, KECCAK_PRNG_NR_START,
-                KECCAK_PAD_MULTIRATE);
 }
 
-void KECCAK_PRNG_random(void *buff, uint8_t num) {
+void KeccakPrngRandom(void *buff_ptr, uint8_t num) {
 #if defined(KECCAK_PRNG_DEBUG) && KECCAK_PRNG_DEBUG == 1
-  KECCAK_squeeze(&KECCAK_PRNG_entropy, KECCAK_PRNG_RATE, KECCAK_PRNG_NR_STEP,
-                 buff, num);
+  KeccakSqueeze(&Keccak_Prng_Entropy, KECCAK_PRNG_RATE, KECCAK_PRNG_NR_STEP,
+                buff_ptr, num);
 #else
-  KECCAK_encrypt(&KECCAK_PRNG_entropy, KECCAK_PRNG_RATE, KECCAK_PRNG_NR_STEP,
-                 buff, num);
+  KeccakEncrypt(&keccak_prng_entropy, KECCAK_PRNG_RATE, KECCAK_PRNG_NR_STEP,
+                buff_ptr, num);
 #endif
 }

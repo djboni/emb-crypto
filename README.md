@@ -30,5 +30,5 @@ python3 -m unittest
 
 You can use this code both for closed- and open-source projects. You are also free to keep changes to yourself. However we'll enjoy improvements and suggestions.
 
-You are free to copy, modify, and distribute this code with attribution under the terms of the Apache License Version 2.0. See the (doc/LICENSE)[https://raw.githubusercontent.com/djboni/emb-crypto/master/doc/LICENSE] file for details.
+You are free to copy, modify, and distribute this code with attribution under the terms of the Apache License Version 2.0. See the [doc/LICENSE](https://github.com/djboni/emb-crypto/blob/master/LICENSE) file for details.
 

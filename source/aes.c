@@ -28,12 +28,12 @@
 #define pgm_read_byte(x) *(x)
 #endif
 
-struct aes_subkey {
+struct aes_subkey_t {
   uint8_t byte[AES_KEY_LEN];
   uint8_t i;
 };
 
-PROGMEM const uint8_t aes_bytesub_table[256] = {
+PROGMEM const uint8_t AES_Bytesub_Table[256] = {
     0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b,
     0xfe, 0xd7, 0xab, 0x76, 0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0,
     0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0, 0xb7, 0xfd, 0x93, 0x26,
@@ -57,7 +57,7 @@ PROGMEM const uint8_t aes_bytesub_table[256] = {
     0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f,
     0xb0, 0x54, 0xbb, 0x16};
 
-PROGMEM const uint8_t aes_invbytesub_table[256] = {
+PROGMEM const uint8_t AES_Invbytesub_Table[256] = {
     0x52, 0x09, 0x6a, 0xd5, 0x30, 0x36, 0xa5, 0x38, 0xbf, 0x40, 0xa3, 0x9e,
     0x81, 0xf3, 0xd7, 0xfb, 0x7c, 0xe3, 0x39, 0x82, 0x9b, 0x2f, 0xff, 0x87,
     0x34, 0x8e, 0x43, 0x44, 0xc4, 0xde, 0xe9, 0xcb, 0x54, 0x7b, 0x94, 0x32,
@@ -81,37 +81,39 @@ PROGMEM const uint8_t aes_invbytesub_table[256] = {
     0x17, 0x2b, 0x04, 0x7e, 0xba, 0x77, 0xd6, 0x26, 0xe1, 0x69, 0x14, 0x63,
     0x55, 0x21, 0x0c, 0x7d};
 
-PROGMEM const uint8_t aes_rcon_poli_table[10] = {0x01, 0x02, 0x04, 0x08, 0x10,
+PROGMEM const uint8_t AES_Rcon_Poli_Table[10] = {0x01, 0x02, 0x04, 0x08, 0x10,
                                                  0x20, 0x40, 0x80, 0x1b, 0x36};
 
 /* Value to XOR from least significant byte for most significant byte with
  * values 0-7 MSB(0x7FF == (0x80<<4)-1).
  * x^8 + x^4 + x^3 + x + 1 = 0x011b
  */
-PROGMEM const uint8_t aes_mixcolumn_gf2p8_table[8] = {0x00, 0x1b, 0x36, 0x2d,
+PROGMEM const uint8_t AES_Mixcolumn_Gf2p8_Table[8] = {0x00, 0x1b, 0x36, 0x2d,
                                                       0x6c, 0x77, 0x5a, 0x41};
 
-uint8_t aes_bytesub(uint8_t i) { return pgm_read_byte(&aes_bytesub_table[i]); }
-
-uint8_t aes_invbytesub(uint8_t i) {
-  return pgm_read_byte(&aes_invbytesub_table[i]);
+uint8_t AESByteSubTable(uint8_t i) {
+  return pgm_read_byte(&AES_Bytesub_Table[i]);
 }
 
-uint8_t aes_rcon_poli(uint8_t i) {
-  return pgm_read_byte(&aes_rcon_poli_table[i]);
+uint8_t AESInvByteSubTable(uint8_t i) {
+  return pgm_read_byte(&AES_Invbytesub_Table[i]);
 }
 
-uint8_t aes_mixcolumn_gf2p8(uint8_t i) {
-  return pgm_read_byte(&aes_mixcolumn_gf2p8_table[i]);
+uint8_t AESRconPoli(uint8_t i) {
+  return pgm_read_byte(&AES_Rcon_Poli_Table[i]);
 }
 
-void aes_subword(uint8_t bytes[4]) {
+uint8_t AESMixColumnGf2P8(uint8_t i) {
+  return pgm_read_byte(&AES_Mixcolumn_Gf2p8_Table[i]);
+}
+
+void AESSubword(uint8_t bytes[4]) {
   uint8_t i;
   for (i = 0; i < 4; ++i)
-    bytes[i] = aes_bytesub(bytes[i]);
+    bytes[i] = AESByteSubTable(bytes[i]);
 }
 
-void aes_rotword(uint8_t bytes[4]) {
+void AESRotword(uint8_t bytes[4]) {
   uint8_t i;
   uint8_t temp[4];
   for (i = 0; i < 4; ++i)
@@ -120,9 +122,9 @@ void aes_rotword(uint8_t bytes[4]) {
     bytes[i] = temp[(i + 1) % 4];
 }
 
-void aes_rcon(uint8_t bytes[4], uint8_t i) { bytes[0] ^= aes_rcon_poli(i); }
+void AESRcon(uint8_t bytes[4], uint8_t i) { bytes[0] ^= AESRconPoli(i); }
 
-uint8_t mod_AES_KEY_LEN(uint8_t x) {
+uint8_t ModAESKeyLen(uint8_t x) {
 #if AES_KEY_LEN == 16
   return x % AES_KEY_LEN;
 #elif AES_KEY_LEN == 32
@@ -141,7 +143,7 @@ uint8_t mod_AES_KEY_LEN(uint8_t x) {
 #endif
 }
 
-uint8_t mod_AES_KEY_LEN_4(uint8_t x) {
+uint8_t ModAESKeyLen4(uint8_t x) {
 #if AES_KEY_LEN == 16
   return x % (AES_KEY_LEN / 4);
 #elif AES_KEY_LEN == 32
@@ -164,7 +166,7 @@ uint8_t mod_AES_KEY_LEN_4(uint8_t x) {
 #endif
 }
 
-uint8_t div_AES_KEY_LEN_4(uint8_t x) {
+uint8_t DivAESKeyLen4(uint8_t x) {
 #if AES_KEY_LEN == 16
   return x / (AES_KEY_LEN / 4);
 #elif AES_KEY_LEN == 32
@@ -200,62 +202,62 @@ uint8_t div_AES_KEY_LEN_4(uint8_t x) {
 #endif
 }
 
-void aes_key_expansion_internal(struct aes_subkey *subkey) {
+void AESKeyExpansionInternal(struct aes_subkey_t *subkey_ptr) {
   uint8_t temp[4], j;
-  const uint8_t i = subkey->i;
+  const uint8_t i = subkey_ptr->i;
 
   for (j = 0; j < 4; ++j) {
-    temp[j] = subkey->byte[mod_AES_KEY_LEN(4 * i + (AES_KEY_LEN - 4) + j)];
+    temp[j] = subkey_ptr->byte[ModAESKeyLen(4 * i + (AES_KEY_LEN - 4) + j)];
   }
 
-  if (mod_AES_KEY_LEN_4(i) == 0) {
-    aes_rotword(temp);
-    aes_subword(temp);
-    aes_rcon(temp, (uint8_t)(div_AES_KEY_LEN_4(i) - 1));
-  } else if ((AES_KEY_LEN / 4) > 6 && mod_AES_KEY_LEN_4(i) == 4) {
-    aes_subword(temp);
+  if (ModAESKeyLen4(i) == 0) {
+    AESRotword(temp);
+    AESSubword(temp);
+    AESRcon(temp, (uint8_t)(DivAESKeyLen4(i) - 1));
+  } else if ((AES_KEY_LEN / 4) > 6 && ModAESKeyLen4(i) == 4) {
+    AESSubword(temp);
   }
 
   for (j = 0; j < 4; ++j) {
-    subkey->byte[mod_AES_KEY_LEN(4 * i + j)] =
-        subkey->byte[mod_AES_KEY_LEN(4 * i + j)] ^ temp[j];
+    subkey_ptr->byte[ModAESKeyLen(4 * i + j)] =
+        subkey_ptr->byte[ModAESKeyLen(4 * i + j)] ^ temp[j];
   }
 }
 
-void aes_key_expansion(struct aes_subkey *subkey, uint8_t round) {
+void AESKeyExpansion(struct aes_subkey_t *subkey_ptr, uint8_t round) {
   uint8_t i;
   if (round == 0) {
-    subkey->i = AES_KEY_LEN / 4;
+    subkey_ptr->i = AES_KEY_LEN / 4;
   } else {
     for (i = 0; i < 4; ++i) {
-      if (subkey->i >= 4 * (AES_NUM_ROUNDS + 1)) {
+      if (subkey_ptr->i >= 4 * (AES_NUM_ROUNDS + 1)) {
         break;
       }
-      aes_key_expansion_internal(subkey);
-      subkey->i = (uint8_t)(subkey->i + 1);
+      AESKeyExpansionInternal(subkey_ptr);
+      subkey_ptr->i = (uint8_t)(subkey_ptr->i + 1);
     }
   }
 }
 
-void aes_inv_key_expansion(struct aes_subkey *subkey, uint8_t round) {
+void AESInvKeyExpansion(struct aes_subkey_t *subkey_ptr, uint8_t round) {
   uint8_t i;
   if (round == 0) {
   } else {
     if (round == AES_NUM_ROUNDS) {
-      subkey->i = 4 * (AES_NUM_ROUNDS + 1);
+      subkey_ptr->i = 4 * (AES_NUM_ROUNDS + 1);
     }
 
     for (i = 0; i < 4; ++i) {
-      if (subkey->i == 0) {
+      if (subkey_ptr->i == 0) {
         break;
       }
-      subkey->i = (uint8_t)(subkey->i - 1);
-      aes_key_expansion_internal(subkey);
+      subkey_ptr->i = (uint8_t)(subkey_ptr->i - 1);
+      AESKeyExpansionInternal(subkey_ptr);
     }
   }
 }
 
-void aes_mixcolumn(uint8_t col[4]) {
+void AESMixcolumn(uint8_t col[4]) {
   uint16_t mixed[4] = {0, 0, 0, 0};
   const uint16_t fixed = col[0] ^ col[1] ^ col[2] ^ col[3];
   uint8_t i, j;
@@ -284,11 +286,11 @@ void aes_mixcolumn(uint8_t col[4]) {
   for (i = 0; i < 4; ++i) {
     uint8_t msb = (uint8_t)(mixed[i] >> 8);
     uint8_t lsb = (uint8_t)(mixed[i]);
-    col[i] = (uint8_t)(lsb ^ aes_mixcolumn_gf2p8(msb));
+    col[i] = (uint8_t)(lsb ^ AESMixColumnGf2P8(msb));
   }
 }
 
-void aes_invmixcolumn(uint8_t col[4]) {
+void AESInvMixColumn(uint8_t col[4]) {
   uint16_t mixed[4] = {0, 0, 0, 0};
   const uint16_t fixed =
       (uint16_t)(col[0] ^ col[1] ^ col[2] ^ col[3] ^ ((uint16_t)col[0] << 3) ^
@@ -325,134 +327,134 @@ void aes_invmixcolumn(uint8_t col[4]) {
   for (i = 0; i < 4; ++i) {
     uint8_t msb = (uint8_t)(mixed[i] >> 8);
     uint8_t lsb = (uint8_t)(mixed[i]);
-    col[i] = (uint8_t)(lsb ^ aes_mixcolumn_gf2p8(msb));
+    col[i] = (uint8_t)(lsb ^ AESMixColumnGf2P8(msb));
   }
 }
 
-void aes_byte_sub(uint8_t A[AES_BLOCK_LEN]) {
+void AESByteSub(uint8_t a[AES_BLOCK_LEN]) {
   uint8_t i;
   for (i = 0; i < AES_BLOCK_LEN; ++i) {
-    A[i] = aes_bytesub(A[i]);
+    a[i] = AESByteSubTable(a[i]);
   }
 }
 
-void aes_shift_row(uint8_t A[AES_BLOCK_LEN]) {
-  uint8_t T;
+void AESShiftRow(uint8_t a[AES_BLOCK_LEN]) {
+  uint8_t t;
 
-  /* B[0] = A[0]; */
-  /* B[4] = A[4]; */
-  /* B[8] = A[8]; */
-  /* B[12] = A[12]; */
+  /* b[0] = a[0]; */
+  /* b[4] = a[4]; */
+  /* b[8] = a[8]; */
+  /* b[12] = a[12]; */
 
-  /* B[1] = A[5]; */
-  /* B[5] = A[9]; */
-  /* B[9] = A[13]; */
-  /* B[13] = A[1]; */
-  T = A[1];
-  A[1] = A[5];
-  A[5] = A[9];
-  A[9] = A[13];
-  A[13] = T;
+  /* b[1] = a[5]; */
+  /* b[5] = a[9]; */
+  /* b[9] = a[13]; */
+  /* b[13] = a[1]; */
+  t = a[1];
+  a[1] = a[5];
+  a[5] = a[9];
+  a[9] = a[13];
+  a[13] = t;
 
-  /* B[2] = A[10]; */
-  /* B[10] = A[2]; */
-  /* B[6] = A[14]; */
-  /* B[14] = A[6]; */
-  T = A[2];
-  A[2] = A[10];
-  A[10] = T;
-  T = A[6];
-  A[6] = A[14];
-  A[14] = T;
+  /* b[2] = a[10]; */
+  /* b[10] = a[2]; */
+  /* b[6] = a[14]; */
+  /* b[14] = a[6]; */
+  t = a[2];
+  a[2] = a[10];
+  a[10] = t;
+  t = a[6];
+  a[6] = a[14];
+  a[14] = t;
 
-  /* B[3] = A[15]; */
-  /* B[15] = A[11]; */
-  /* B[11] = A[7]; */
-  /* B[7] = A[3]; */
-  T = A[3];
-  A[3] = A[15];
-  A[15] = A[11];
-  A[11] = A[7];
-  A[7] = T;
+  /* b[3] = a[15]; */
+  /* b[15] = a[11]; */
+  /* b[11] = a[7]; */
+  /* b[7] = a[3]; */
+  t = a[3];
+  a[3] = a[15];
+  a[15] = a[11];
+  a[11] = a[7];
+  a[7] = t;
 }
 
-void aes_mix_col(uint8_t A[AES_BLOCK_LEN]) {
-  aes_mixcolumn(&A[0]);
-  aes_mixcolumn(&A[4]);
-  aes_mixcolumn(&A[8]);
-  aes_mixcolumn(&A[12]);
+void AESMixCol(uint8_t a[AES_BLOCK_LEN]) {
+  AESMixcolumn(&a[0]);
+  AESMixcolumn(&a[4]);
+  AESMixcolumn(&a[8]);
+  AESMixcolumn(&a[12]);
 }
 
-void aes_key_add(uint8_t A[AES_BLOCK_LEN], struct aes_subkey *subkey,
-                 uint8_t round) {
+void AESKeyAdd(uint8_t a[AES_BLOCK_LEN], struct aes_subkey_t *subkey_ptr,
+               uint8_t round) {
   uint8_t i;
-  aes_key_expansion(subkey, round);
+  AESKeyExpansion(subkey_ptr, round);
   for (i = 0; i < AES_BLOCK_LEN; ++i) {
-    A[i] = A[i] ^ subkey->byte[mod_AES_KEY_LEN(16 * round + i)];
+    a[i] = a[i] ^ subkey_ptr->byte[ModAESKeyLen(16 * round + i)];
   }
 }
 
-void aes_inv_byte_sub(uint8_t A[AES_BLOCK_LEN]) {
-  uint8_t i;
-  for (i = 0; i < AES_BLOCK_LEN; ++i) {
-    A[i] = aes_invbytesub(A[i]);
-  }
-}
-
-void aes_inv_shift_row(uint8_t A[AES_BLOCK_LEN]) {
-  uint8_t T;
-
-  /* B[0] = A[0]; */
-  /* B[4] = A[4]; */
-  /* B[8] = A[8]; */
-  /* B[12] = A[12]; */
-
-  /* B[1] = A[13]; */
-  /* B[13] = A[9]; */
-  /* B[9] = A[5]; */
-  /* B[5] = A[1]; */
-  T = A[1];
-  A[1] = A[13];
-  A[13] = A[9];
-  A[9] = A[5];
-  A[5] = T;
-
-  /* B[2] = A[10]; */
-  /* B[10] = A[2]; */
-  /* B[6] = A[14]; */
-  /* B[14] = A[6]; */
-  T = A[2];
-  A[2] = A[10];
-  A[10] = T;
-  T = A[6];
-  A[6] = A[14];
-  A[14] = T;
-
-  /* B[3] = A[7]; */
-  /* B[7] = A[11]; */
-  /* B[11] = A[15]; */
-  /* B[15] = A[3]; */
-  T = A[3];
-  A[3] = A[7];
-  A[7] = A[11];
-  A[11] = A[15];
-  A[15] = T;
-}
-
-void aes_inv_mix_col(uint8_t A[AES_BLOCK_LEN]) {
-  aes_invmixcolumn(&A[0]);
-  aes_invmixcolumn(&A[4]);
-  aes_invmixcolumn(&A[8]);
-  aes_invmixcolumn(&A[12]);
-}
-
-void aes_inv_key_add(uint8_t A[AES_BLOCK_LEN], struct aes_subkey *subkey,
-                     uint8_t round) {
+void AESInvByteSub(uint8_t a[AES_BLOCK_LEN]) {
   uint8_t i;
   for (i = 0; i < AES_BLOCK_LEN; ++i) {
-    A[i] = A[i] ^ subkey->byte[mod_AES_KEY_LEN(16 * round + i)];
+    a[i] = AESInvByteSubTable(a[i]);
   }
-  aes_inv_key_expansion(subkey, round);
+}
+
+void AESInvShiftRow(uint8_t a[AES_BLOCK_LEN]) {
+  uint8_t t;
+
+  /* b[0] = a[0]; */
+  /* b[4] = a[4]; */
+  /* b[8] = a[8]; */
+  /* b[12] = a[12]; */
+
+  /* b[1] = a[13]; */
+  /* b[13] = a[9]; */
+  /* b[9] = a[5]; */
+  /* b[5] = a[1]; */
+  t = a[1];
+  a[1] = a[13];
+  a[13] = a[9];
+  a[9] = a[5];
+  a[5] = t;
+
+  /* b[2] = a[10]; */
+  /* b[10] = a[2]; */
+  /* b[6] = a[14]; */
+  /* b[14] = a[6]; */
+  t = a[2];
+  a[2] = a[10];
+  a[10] = t;
+  t = a[6];
+  a[6] = a[14];
+  a[14] = t;
+
+  /* b[3] = a[7]; */
+  /* b[7] = a[11]; */
+  /* b[11] = a[15]; */
+  /* b[15] = a[3]; */
+  t = a[3];
+  a[3] = a[7];
+  a[7] = a[11];
+  a[11] = a[15];
+  a[15] = t;
+}
+
+void AESInvMixCol(uint8_t a[AES_BLOCK_LEN]) {
+  AESInvMixColumn(&a[0]);
+  AESInvMixColumn(&a[4]);
+  AESInvMixColumn(&a[8]);
+  AESInvMixColumn(&a[12]);
+}
+
+void AESInvKeyAdd(uint8_t a[AES_BLOCK_LEN], struct aes_subkey_t *subkey_ptr,
+                  uint8_t round) {
+  uint8_t i;
+  for (i = 0; i < AES_BLOCK_LEN; ++i) {
+    a[i] = a[i] ^ subkey_ptr->byte[ModAESKeyLen(16 * round + i)];
+  }
+  AESInvKeyExpansion(subkey_ptr, round);
 }
 
 /** AES encrypt
@@ -460,12 +462,12 @@ void aes_inv_key_add(uint8_t A[AES_BLOCK_LEN], struct aes_subkey *subkey,
  * Encrypts plain-text 'plain' with 'key', outputs cipher-text
  * to 'cipher'.
  */
-void aes_ecb_encrypt(const uint8_t key[AES_KEY_LEN],
-                     const uint8_t plain[AES_BLOCK_LEN],
-                     uint8_t cipher[AES_BLOCK_LEN]) {
+void AES_ECBEncrypt(const uint8_t key[AES_KEY_LEN],
+                    const uint8_t plain[AES_BLOCK_LEN],
+                    uint8_t cipher[AES_BLOCK_LEN]) {
   uint8_t round;
-  uint8_t A[AES_BLOCK_LEN];
-  struct aes_subkey subkey;
+  uint8_t a[AES_BLOCK_LEN];
+  struct aes_subkey_t subkey;
   uint8_t i;
 
   /* Copy key to subkey */
@@ -475,22 +477,22 @@ void aes_ecb_encrypt(const uint8_t key[AES_KEY_LEN],
 
   /* Copy plain-text to temporary variables */
   for (i = 0; i < AES_BLOCK_LEN; ++i) {
-    A[i] = plain[i];
+    a[i] = plain[i];
   }
 
   /* Rounds */
   for (round = 0; round < AES_NUM_ROUNDS; ++round) {
-    aes_key_add(&A[0], &subkey, round);
-    aes_byte_sub(&A[0]);
-    aes_shift_row(&A[0]);
+    AESKeyAdd(&a[0], &subkey, round);
+    AESByteSub(&a[0]);
+    AESShiftRow(&a[0]);
     if (round < AES_NUM_ROUNDS - 1)
-      aes_mix_col(&A[0]);
+      AESMixCol(&a[0]);
   }
-  aes_key_add(&A[0], &subkey, round);
+  AESKeyAdd(&a[0], &subkey, round);
 
   /* Copy cipher-text to output variable */
   for (i = 0; i < AES_BLOCK_LEN; ++i) {
-    cipher[i] = A[i];
+    cipher[i] = a[i];
   }
 }
 
@@ -498,9 +500,9 @@ void aes_ecb_encrypt(const uint8_t key[AES_KEY_LEN],
  *
  * Expand the key for decryption, i.e. create a "decryption key".
  */
-void aes_key_decrypt_expansion(uint8_t decrypt_key[AES_KEY_LEN],
-                               const uint8_t key[AES_KEY_LEN]) {
-  struct aes_subkey subkey;
+void AESKeyDecryptExpansion(uint8_t decrypt_key[AES_KEY_LEN],
+                            const uint8_t key[AES_KEY_LEN]) {
+  struct aes_subkey_t subkey;
   uint8_t i;
 
   /* Copy key to subkey */
@@ -510,7 +512,7 @@ void aes_key_decrypt_expansion(uint8_t decrypt_key[AES_KEY_LEN],
 
   /* Run key expansion AES_NUM_ROUNDS+1 times */
   for (i = 0; i < AES_NUM_ROUNDS + 1; ++i) {
-    aes_key_expansion(&subkey, i);
+    AESKeyExpansion(&subkey, i);
   }
 
   /* Copy expanded key to decryption key */
@@ -524,36 +526,36 @@ void aes_key_decrypt_expansion(uint8_t decrypt_key[AES_KEY_LEN],
  * Decrypts cipher-text 'cipher' with 'key', outputs plain-text
  * to 'plain'.
  */
-void aes_ecb_decrypt(const uint8_t key[AES_KEY_LEN],
-                     const uint8_t cipher[AES_BLOCK_LEN],
-                     uint8_t plain[AES_BLOCK_LEN]) {
+void AES_ECBDecrypt(const uint8_t key[AES_KEY_LEN],
+                    const uint8_t cipher[AES_BLOCK_LEN],
+                    uint8_t plain[AES_BLOCK_LEN]) {
   uint8_t round;
-  uint8_t A[AES_BLOCK_LEN];
-  struct aes_subkey subkey;
+  uint8_t a[AES_BLOCK_LEN];
+  struct aes_subkey_t subkey;
   uint8_t i;
 
   /* Converto do decryption key, into subkey */
-  aes_key_decrypt_expansion(&subkey.byte[0], key);
+  AESKeyDecryptExpansion(&subkey.byte[0], key);
 
   /* Copy cipher-text to temporary variables */
   for (i = 0; i < AES_BLOCK_LEN; ++i) {
-    A[i] = cipher[i];
+    a[i] = cipher[i];
   }
 
   /* Rounds */
   for (round = AES_NUM_ROUNDS; round > 0; --round) {
-    aes_inv_key_add(&A[0], &subkey, round);
+    AESInvKeyAdd(&a[0], &subkey, round);
     if (round < AES_NUM_ROUNDS) {
-      aes_inv_mix_col(&A[0]);
+      AESInvMixCol(&a[0]);
     }
-    aes_inv_shift_row(&A[0]);
-    aes_inv_byte_sub(&A[0]);
+    AESInvShiftRow(&a[0]);
+    AESInvByteSub(&a[0]);
   }
-  aes_inv_key_add(&A[0], &subkey, round);
+  AESInvKeyAdd(&a[0], &subkey, round);
 
   /* Copy plain-text to output variable */
   for (i = AES_BLOCK_LEN; i > 0; --i) {
-    plain[i - 1] = A[i - 1];
+    plain[i - 1] = a[i - 1];
   }
 }
 
@@ -566,29 +568,29 @@ void aes_ecb_decrypt(const uint8_t key[AES_KEY_LEN],
  * The initialization vector should be a nonce (number used once with the key).
  * It is not a secret and can be transmitted in plain-text.
  */
-void aes_cbc_encrypt(const uint8_t key[AES_KEY_LEN],
-                     const uint8_t iv[AES_BLOCK_LEN], const uint8_t *plain,
-                     uint32_t length, uint8_t *cipher) {
-  uint8_t A[AES_BLOCK_LEN];
+void AES_CBCEncrypt(const uint8_t key[AES_KEY_LEN],
+                    const uint8_t iv[AES_BLOCK_LEN], const uint8_t *plain_ptr,
+                    uint32_t length, uint8_t *cipher_ptr) {
+  uint8_t a[AES_BLOCK_LEN];
   uint8_t i;
 
   /* A = C[0] = Ek(iv) */
   for (i = 0; i < AES_BLOCK_LEN; ++i) {
-    A[i] = iv[i];
+    a[i] = iv[i];
   }
-  aes_ecb_encrypt(key, A, A);
+  AES_ECBEncrypt(key, a, a);
 
   while (length > 0) {
     /* A = C[i] = Ek(P[i] ^ C[i-1] */
     for (i = 0; i < AES_BLOCK_LEN; ++i) {
-      A[i] ^= *plain++;
+      a[i] ^= *plain_ptr++;
     }
     length -= AES_BLOCK_LEN;
-    aes_ecb_encrypt(key, A, A);
+    AES_ECBEncrypt(key, a, a);
 
     /* cipher = A = C[i] */
     for (i = 0; i < AES_BLOCK_LEN; ++i) {
-      *cipher++ = A[i];
+      *cipher_ptr++ = a[i];
     }
   }
 }
@@ -602,32 +604,32 @@ void aes_cbc_encrypt(const uint8_t key[AES_KEY_LEN],
  * The initialization vector should be a nonce (number used once with the key).
  * It is not a secret and can be transmitted in plain-text.
  */
-void aes_cbc_decrypt(const uint8_t key[AES_KEY_LEN],
-                     const uint8_t iv[AES_BLOCK_LEN], const uint8_t *cipher,
-                     uint32_t length, uint8_t *plain) {
-  uint8_t A[AES_BLOCK_LEN];
-  uint8_t B[AES_BLOCK_LEN];
+void AES_CBCDecrypt(const uint8_t key[AES_KEY_LEN],
+                    const uint8_t iv[AES_BLOCK_LEN], const uint8_t *cipher_ptr,
+                    uint32_t length, uint8_t *plain_ptr) {
+  uint8_t a[AES_BLOCK_LEN];
+  uint8_t b[AES_BLOCK_LEN];
   uint8_t i;
 
   /* A = C[0] = Ek(iv) */
   for (i = 0; i < AES_BLOCK_LEN; ++i) {
-    A[i] = iv[i];
+    a[i] = iv[i];
   }
-  aes_ecb_encrypt(key, A, A);
+  AES_ECBEncrypt(key, a, a);
 
   while (length > 0) {
     /* B = Dk(C[i]) */
     for (i = 0; i < AES_BLOCK_LEN; ++i) {
-      B[i] = cipher[i];
+      b[i] = cipher_ptr[i];
     }
     length -= AES_BLOCK_LEN;
-    aes_ecb_decrypt(key, B, B);
+    AES_ECBDecrypt(key, b, b);
 
     /* plain = P[i] = Dk(C[i]) XOR C[i-1] */
     /* A = C[i] */
     for (i = 0; i < AES_BLOCK_LEN; ++i) {
-      *plain++ = B[i] ^ A[i];
-      A[i] = *cipher++;
+      *plain_ptr++ = b[i] ^ a[i];
+      a[i] = *cipher_ptr++;
     }
   }
 }
@@ -645,60 +647,60 @@ void aes_cbc_decrypt(const uint8_t key[AES_KEY_LEN],
  * once, random or incremental) and encrypt the hash with the MAC key.
  * This way there is no length extension attack and no replay attack.
  *
- * struct aes_hash_state state;
- * aes_hash_init(&state);
- * aes_hash_update(&state, data1, length1);
- * aes_hash_update(&state, data2, length2);
+ * struct aes_hash_state_t state_ptr;
+ * aes_hash_init(&state_ptr);
+ * aes_hash_update(&state_ptr, data1, length1);
+ * aes_hash_update(&state_ptr, data2, length2);
  * // ... as much as you want
- * aes_hash_finish(&state);
- * // Hash in state.hash
+ * aes_hash_finish(&state_ptr);
+ * // Hash in state_ptr.hash
  *
  */
 
-void aes_hash_init(struct aes_hash_state *state) {
+void AESHashInit(struct aes_hash_state_t *state_ptr) {
   uint8_t i;
   for (i = 0; i < AES_BLOCK_LEN; ++i)
-    state->hash[i] = 0x00;
-  state->length = 0;
+    state_ptr->hash[i] = 0x00;
+  state_ptr->length = 0;
 }
 
-void aes_hash_init_iv(struct aes_hash_state *state,
-                      const uint8_t iv[AES_BLOCK_LEN]) {
+void AESHashInitIv(struct aes_hash_state_t *state_ptr,
+                   const uint8_t iv[AES_BLOCK_LEN]) {
   uint8_t i;
   for (i = 0; i < AES_BLOCK_LEN; ++i)
-    state->hash[i] = iv[i];
-  state->length = 0;
+    state_ptr->hash[i] = iv[i];
+  state_ptr->length = 0;
 }
 
-void aes_hash_update(struct aes_hash_state *state, const uint8_t *plain,
-                     uint32_t length) {
+void AESHashUpdate(struct aes_hash_state_t *state_ptr, const uint8_t *plain_ptr,
+                   uint32_t length) {
   uint8_t i;
 
   while (length > 0) {
     /* Try to fill one plain block. */
-    for (i = state->length; i < AES_KEY_LEN && length > 0; i++, length--)
-      state->plain[i] = *plain++;
+    for (i = state_ptr->length; i < AES_KEY_LEN && length > 0; i++, length--)
+      state_ptr->plain[i] = *plain_ptr++;
 
     if (i >= AES_KEY_LEN) {
       /* Block filled. Encrypt. */
-      aes_ecb_encrypt(state->plain, state->hash, state->hash);
-      state->length = 0;
+      AES_ECBEncrypt(state_ptr->plain, state_ptr->hash, state_ptr->hash);
+      state_ptr->length = 0;
     } else {
-      state->length = i;
+      state_ptr->length = i;
     }
   }
 }
 
-void aes_hash_finish(struct aes_hash_state *state) {
-  uint8_t i = state->length;
+void AESHashFinish(struct aes_hash_state_t *state_ptr) {
+  uint8_t i = state_ptr->length;
 
   /* Mark end of data. */
-  state->plain[i++] = 0x80;
+  state_ptr->plain[i++] = 0x80;
 
   /* Fill the block. */
   for (; i < AES_KEY_LEN; i++)
-    state->plain[i] = 0x00;
+    state_ptr->plain[i] = 0x00;
 
   /* Encrypt. */
-  aes_ecb_encrypt(state->plain, state->hash, state->hash);
+  AES_ECBEncrypt(state_ptr->plain, state_ptr->hash, state_ptr->hash);
 }

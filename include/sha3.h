@@ -28,61 +28,67 @@ extern "C" {
 
 #if (KECCAK_WORD == 8)
 
-struct SHA3_512_t {
-  struct KECCAK_t hash;
+struct sha3_512_t {
+  struct keccak_t hash;
 };
 
-struct SHA3_384_t {
-  struct KECCAK_t hash;
+struct sha3_384_t {
+  struct keccak_t hash;
 };
 
-struct SHA3_256_t {
-  struct KECCAK_t hash;
+struct sha3_256_t {
+  struct keccak_t hash;
 };
 
-struct SHA3_224_t {
-  struct KECCAK_t hash;
+struct sha3_224_t {
+  struct keccak_t hash;
 };
 
-struct SHAKE_256_t {
-  struct KECCAK_t hash;
+struct shake_256_t {
+  struct keccak_t hash;
 };
 
-struct SHAKE_128_t {
-  struct KECCAK_t hash;
+struct shake_128_t {
+  struct keccak_t hash;
 };
 
-void SHA3_512_init(struct SHA3_512_t *state);
-void SHA3_512_update(struct SHA3_512_t *state, const void *data, uint16_t num);
-void SHA3_512_finish(struct SHA3_512_t *state);
+void SHA3_512Init(struct sha3_512_t *state_ptr);
+void SHA3_512Update(struct sha3_512_t *state_ptr, const void *data_ptr,
+                    uint16_t num);
+void SHA3_512Finish(struct sha3_512_t *state_ptr);
 
-void SHA3_384_init(struct SHA3_384_t *state);
-void SHA3_384_update(struct SHA3_384_t *state, const void *data, uint16_t num);
-void SHA3_384_finish(struct SHA3_384_t *state);
+void SHA3_384Init(struct sha3_384_t *state_ptr);
+void SHA3_384Update(struct sha3_384_t *state_ptr, const void *data_ptr,
+                    uint16_t num);
+void SHA3_384Finish(struct sha3_384_t *state_ptr);
 
-void SHA3_256_init(struct SHA3_256_t *state);
-void SHA3_256_update(struct SHA3_256_t *state, const void *data, uint16_t num);
-void SHA3_256_finish(struct SHA3_256_t *state);
+void SHA3_256Init(struct sha3_256_t *state_ptr);
+void SHA3_256Update(struct sha3_256_t *state_ptr, const void *data_ptr,
+                    uint16_t num);
+void SHA3_256Finish(struct sha3_256_t *state_ptr);
 
-void SHA3_224_init(struct SHA3_224_t *state);
-void SHA3_224_update(struct SHA3_224_t *state, const void *data, uint16_t num);
-void SHA3_224_finish(struct SHA3_224_t *state);
+void SHA3_224Init(struct sha3_224_t *state_ptr);
+void SHA3_224Update(struct sha3_224_t *state_ptr, const void *data_ptr,
+                    uint16_t num);
+void SHA3_224Finish(struct sha3_224_t *state_ptr);
 
-void SHAKE_256_init(struct SHAKE_256_t *state);
-void SHAKE_256_domain(struct SHAKE_256_t *state, const void *domain,
-                      uint16_t domain_length);
-void SHAKE_256_absorb(struct SHAKE_256_t *state, const void *data,
-                      uint16_t num);
-void SHAKE_256_finish(struct SHAKE_256_t *state);
-void SHAKE_256_squeeze(struct SHAKE_256_t *state, void *data, uint16_t num);
+void SHAKE256Init(struct shake_256_t *state_ptr);
+void SHAKE256Domain(struct shake_256_t *state_ptr, const void *domain_ptr,
+                    uint16_t domain_length);
+void SHAKE256Absorb(struct shake_256_t *state_ptr, const void *data_ptr,
+                    uint16_t num);
+void SHAKE256Finish(struct shake_256_t *state_ptr);
+void SHAKE256Squeeze(struct shake_256_t *state_ptr, void *data_ptr,
+                     uint16_t num);
 
-void SHAKE_128_init(struct SHAKE_128_t *state);
-void SHAKE_128_domain(struct SHAKE_128_t *state, const void *domain,
-                      uint16_t domain_length);
-void SHAKE_128_absorb(struct SHAKE_128_t *state, const void *data,
-                      uint16_t num);
-void SHAKE_128_finish(struct SHAKE_128_t *state);
-void SHAKE_128_squeeze(struct SHAKE_128_t *state, void *data, uint16_t num);
+void SHAKE128Init(struct shake_128_t *state_ptr);
+void SHAKE128Domain(struct shake_128_t *state_ptr, const void *domain_ptr,
+                    uint16_t domain_length);
+void SHAKE128Absorb(struct shake_128_t *state_ptr, const void *data_ptr,
+                    uint16_t num);
+void SHAKE128Finish(struct shake_128_t *state_ptr);
+void SHAKE128Squeeze(struct shake_128_t *state_ptr, void *data_ptr,
+                     uint16_t num);
 
 #endif
 

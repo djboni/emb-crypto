@@ -42,11 +42,11 @@ extern "C" {
 #define KECCAK_PRNG_NR_START 12
 #define KECCAK_PRNG_NR_STEP 1
 
-void KECCAK_PRNG_seed(const void *buff, uint8_t num);
-void KECCAK_PRNG_random(void *buff, uint8_t num);
+void KeccakPrngSeed(const void *buff_ptr, uint8_t num);
+void KeccakPrngRandom(void *buff_ptr, uint8_t num);
 
 #ifdef KECCAK_PRNG_DEBUG
-extern struct KECCAK_t KECCAK_PRNG_entropy __attribute__((section(".noinit")));
+extern struct keccak_t Keccak_Prng_Entropy __attribute__((section(".noinit")));
 #endif
 
 #ifdef __cplusplus

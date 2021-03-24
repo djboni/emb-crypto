@@ -42,24 +42,25 @@ extern "C" {
 #define KECCAK_PAD_MULTIRATE 0x01 /* Multirate PAD start: 10*. */
 #define KECCAK_PAD_END 0x80       /* PAD end: *01. */
 
-void KECCAK_init(struct KECCAK_t *state);
+void KeccakInit(struct keccak_t *state_ptr);
 
-void KECCAK_absorb(struct KECCAK_t *state, uint8_t rate, uint8_t rounds,
-                   const void *buff, uint16_t num);
-void KECCAK_finish(struct KECCAK_t *state, uint8_t rate, uint8_t rounds,
-                   uint8_t pad_byte);
-void KECCAK_squeeze(struct KECCAK_t *state, uint8_t rate, uint8_t rounds,
-                    void *buff, uint16_t num);
+void KeccakAbsorb(struct keccak_t *state_ptr, uint8_t rate, uint8_t rounds,
+                  const void *buff_ptr, uint16_t num);
+void KeccakFinish(struct keccak_t *state_ptr, uint8_t rate, uint8_t rounds,
+                  uint8_t pad_byte);
+void KeccakSqueeze(struct keccak_t *state_ptr, uint8_t rate, uint8_t rounds,
+                   void *buff_ptr, uint16_t num);
 
-void KECCAK_encrypt(struct KECCAK_t *state, uint8_t rate, uint8_t rounds,
-                    void *buff, uint16_t num);
-void KECCAK_decrypt(struct KECCAK_t *state, uint8_t rate, uint8_t rounds,
-                    void *buff, uint16_t num);
+void KeccakEncrypt(struct keccak_t *state_ptr, uint8_t rate, uint8_t rounds,
+                   void *buff_ptr, uint16_t num);
+void KeccakDecrypt(struct keccak_t *state_ptr, uint8_t rate, uint8_t rounds,
+                   void *buff_ptr, uint16_t num);
 
-void KECCAK_process_data(struct KECCAK_t *state, uint8_t rate, uint8_t rounds,
-                         void *buff, uint16_t num,
-                         void (*function)(uint8_t *state, uint8_t *buff));
-void KECCAK_f(struct KECCAK_t *state, uint8_t rounds);
+void KeccakProcessData(struct keccak_t *state_ptr, uint8_t rate, uint8_t rounds,
+                       void *buff_ptr, uint16_t num,
+                       void (*function_ptr)(uint8_t *state_ptr,
+                                            uint8_t *buff_ptr));
+void KeccakF(struct keccak_t *state_ptr, uint8_t rounds);
 
 #ifdef __cplusplus
 }

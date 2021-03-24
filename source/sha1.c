@@ -18,115 +18,111 @@
 
 #include "sha1.h"
 
-void SHA1_digest(struct SHA1_t *state);
+void SHA1Digest(struct sha1_t *state_ptr);
 
-void SHA1_init(struct SHA1_t *state) {
-  state->hash[0] = 0x67452301;
-  state->hash[1] = 0xEFCDAB89;
-  state->hash[2] = 0x98BADCFE;
-  state->hash[3] = 0x10325476;
-  state->hash[4] = 0xC3D2E1F0;
+void SHA1Init(struct sha1_t *state_ptr) {
+  state_ptr->hash[0] = 0x67452301;
+  state_ptr->hash[1] = 0xEFCDAB89;
+  state_ptr->hash[2] = 0x98BADCFE;
+  state_ptr->hash[3] = 0x10325476;
+  state_ptr->hash[4] = 0xC3D2E1F0;
 
-  state->num = 0;
+  state_ptr->num = 0;
 
 #if 0
   {
     uint8_t i;
     for(i=0; i < 16; ++i)
-      state->data[i] = 0xFFFFFFFF;
+      state_ptr->data[i] = 0xFFFFFFFF;
   }
 #endif
 }
 
-void SHA1_update(struct SHA1_t *state, const void *data, uint16_t num) {
-  const uint8_t *in = data;
-  uint8_t *out = ((uint8_t *)&state->data) + (state->num % 64);
+void SHA1Update(struct sha1_t *state_ptr, const void *data_ptr, uint16_t num) {
+  const uint8_t *in_ptr = data_ptr;
+  uint8_t *out_ptr = ((uint8_t *)&state_ptr->data) + (state_ptr->num % 64);
 
   while (num-- > 0) {
-    *out++ = *in++;
-    if (++(state->num) % 64 == 0) {
+    *out_ptr++ = *in_ptr++;
+    if (++(state_ptr->num) % 64 == 0) {
       /* Digest when a block is completed. */
-      SHA1_digest(state);
-      out = (uint8_t *)&state->data;
+      SHA1Digest(state_ptr);
+      out_ptr = (uint8_t *)&state_ptr->data;
     }
   }
 }
 
-void SHA1_finish(struct SHA1_t *state) {
-  uint8_t *data = (uint8_t *)&state->data;
+void SHA1Finish(struct sha1_t *state_ptr) {
+  uint8_t *data_ptr = (uint8_t *)&state_ptr->data;
   uint8_t i;
-  uint64_t nbits = state->num * 8;
+  uint64_t nbits = state_ptr->num * 8;
 
   /* PAD */
-  i = state->num % 64;
-  data[i++] = 0x80;
+  i = state_ptr->num % 64;
+  data_ptr[i++] = 0x80;
   if (i > 56) {
     for (; i < 64; ++i)
-      data[i] = 0x00;
-    SHA1_digest(state);
+      data_ptr[i] = 0x00;
+    SHA1Digest(state_ptr);
     i = 0;
   }
   for (; i < 56; ++i)
-    data[i] = 0x00;
+    data_ptr[i] = 0x00;
 
   /* Message length */
 
   /* Big endian. */
-  /* *(uint64_t*)&data[56] = state->num * 8; */
+  /* *(uint64_t*)&data_ptr[56] = state_ptr->num * 8; */
 
   /* Little endian. */
   for (i = 0; i < 8; ++i) {
-    data[63 - i] = nbits;
+    data_ptr[63 - i] = nbits;
     nbits >>= 8;
   }
 
-  SHA1_digest(state);
+  SHA1Digest(state_ptr);
 }
 
-void SHA1_big_to_little_endian(struct SHA1_t *state) {
-  uint8_t i;
-  uint32_t val;
-
-  for (i = 0; i < 5; ++i) {
-    val = state->hash[i];
-    val = (val >> 24) | ((val & 0x00FF0000) >> 8) | ((val & 0x0000FF00) << 8) |
-          (val << 24);
-    state->hash[i] = val;
-  }
-}
-
-static uint32_t leftrotate1(uint32_t x) {
-  const uint8_t n = 1;
-  return ((x >> (32 - n)) | (x << n));
-}
-
-static uint32_t leftrotate5(uint32_t x) {
-  const uint8_t n = 5;
-  return ((x >> (32 - n)) | (x << n));
-}
-
-static uint32_t leftrotate30(uint32_t x) {
-  const uint8_t n = 30;
-  return ((x >> (32 - n)) | (x << n));
-}
-
-static uint32_t little_to_big(uint32_t x) {
+static uint32_t LittleToBig(uint32_t x) {
   return ((x >> 24) & 0x000000FF) | ((x >> 8) & 0x0000FF00) |
          ((x << 8) & 0x00FF0000) | ((x << 24) & 0xFF000000);
 }
 
-void SHA1_digest(struct SHA1_t *state) {
-  uint32_t a = state->hash[0];
-  uint32_t b = state->hash[1];
-  uint32_t c = state->hash[2];
-  uint32_t d = state->hash[3];
-  uint32_t e = state->hash[4];
+void SHA1BigToLittleEndian(struct sha1_t *state_ptr) {
+  uint8_t i;
+
+  for (i = 0; i < 5; ++i) {
+    state_ptr->hash[i] = LittleToBig(state_ptr->hash[i]);
+  }
+}
+
+static uint32_t LeftRotate1(uint32_t x) {
+  const uint8_t n = 1;
+  return ((x >> (32 - n)) | (x << n));
+}
+
+static uint32_t LeftRotate5(uint32_t x) {
+  const uint8_t n = 5;
+  return ((x >> (32 - n)) | (x << n));
+}
+
+static uint32_t LeftRotate30(uint32_t x) {
+  const uint8_t n = 30;
+  return ((x >> (32 - n)) | (x << n));
+}
+
+void SHA1Digest(struct sha1_t *state_ptr) {
+  uint32_t a = state_ptr->hash[0];
+  uint32_t b = state_ptr->hash[1];
+  uint32_t c = state_ptr->hash[2];
+  uint32_t d = state_ptr->hash[3];
+  uint32_t e = state_ptr->hash[4];
   uint8_t i, j;
   uint32_t f, k, temp;
 
   /* Change from little to big endian */
   for (i = 0; i < 16; ++i)
-    state->data[i] = little_to_big(state->data[i]);
+    state_ptr->data[i] = LittleToBig(state_ptr->data[i]);
 
   for (i = 0; i < 80; ++i) {
     if (i < 20) {
@@ -143,23 +139,24 @@ void SHA1_digest(struct SHA1_t *state) {
       k = 0xCA62C1D6;
     }
 
-    temp = leftrotate5(a) + f + e + k + state->data[0];
+    temp = LeftRotate5(a) + f + e + k + state_ptr->data[0];
     e = d;
     d = c;
-    c = leftrotate30(b);
+    c = LeftRotate30(b);
     b = a;
     a = temp;
 
-    temp = state->data[13] ^ state->data[8] ^ state->data[2] ^ state->data[0];
-    temp = leftrotate1(temp);
+    temp = state_ptr->data[13] ^ state_ptr->data[8] ^ state_ptr->data[2] ^
+           state_ptr->data[0];
+    temp = LeftRotate1(temp);
     for (j = 0; j < 15; ++j)
-      state->data[j] = state->data[j + 1];
-    state->data[15] = temp;
+      state_ptr->data[j] = state_ptr->data[j + 1];
+    state_ptr->data[15] = temp;
   }
 
-  state->hash[0] += a;
-  state->hash[1] += b;
-  state->hash[2] += c;
-  state->hash[3] += d;
-  state->hash[4] += e;
+  state_ptr->hash[0] += a;
+  state_ptr->hash[1] += b;
+  state_ptr->hash[2] += c;
+  state_ptr->hash[3] += d;
+  state_ptr->hash[4] += e;
 }

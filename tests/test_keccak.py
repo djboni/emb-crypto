@@ -75,14 +75,14 @@ class TestSHA3(unittest.TestCase):
       data = b'\x00' * length
       hash_length = HASH_BITS // 8
 
-      phash_ = ffi[HASH_BITS].new('struct KECCAK_HASH_t[1]')
+      phash_ = ffi[HASH_BITS].new('struct keccak_hash_t[1]')
       hash_ = phash_[0]
 
-      module[HASH_BITS].KECCAK_HASH_init(phash_)
-      module[HASH_BITS].KECCAK_HASH_update(phash_, data, length)
-      module[HASH_BITS].KECCAK_HASH_finish(phash_)
+      module[HASH_BITS].KeccakHashInit(phash_)
+      module[HASH_BITS].KeccakHashUpdate(phash_, data, length)
+      module[HASH_BITS].KeccakHashFinish(phash_)
 
-      hash_module = ffi[HASH_BITS].buffer(hash_.state.A, hash_length)
+      hash_module = ffi[HASH_BITS].buffer(hash_.state.a, hash_length)
       hash_module = hash_module[:]
 
       hash_reference = sha3[HASH_BITS](data).digest()
@@ -95,14 +95,14 @@ class TestSHA3(unittest.TestCase):
       data = b'\x00' * length
       hash_length = HASH_BITS // 8
 
-      phash_ = ffi[HASH_BITS].new('struct KECCAK_HASH_t[1]')
+      phash_ = ffi[HASH_BITS].new('struct keccak_hash_t[1]')
       hash_ = phash_[0]
 
-      module[HASH_BITS].KECCAK_HASH_init(phash_)
-      module[HASH_BITS].KECCAK_HASH_update(phash_, data, length)
-      module[HASH_BITS].KECCAK_HASH_finish(phash_)
+      module[HASH_BITS].KeccakHashInit(phash_)
+      module[HASH_BITS].KeccakHashUpdate(phash_, data, length)
+      module[HASH_BITS].KeccakHashFinish(phash_)
 
-      hash_module = ffi[HASH_BITS].buffer(hash_.state.A, hash_length)
+      hash_module = ffi[HASH_BITS].buffer(hash_.state.a, hash_length)
       hash_module = hash_module[:]
 
       hash_reference = sha3[HASH_BITS](data).digest()
@@ -115,14 +115,14 @@ class TestSHA3(unittest.TestCase):
       data = b'\x00' * length
       hash_length = HASH_BITS // 8
 
-      phash_ = ffi[HASH_BITS].new('struct KECCAK_HASH_t[1]')
+      phash_ = ffi[HASH_BITS].new('struct keccak_hash_t[1]')
       hash_ = phash_[0]
 
-      module[HASH_BITS].KECCAK_HASH_init(phash_)
-      module[HASH_BITS].KECCAK_HASH_update(phash_, data, length)
-      module[HASH_BITS].KECCAK_HASH_finish(phash_)
+      module[HASH_BITS].KeccakHashInit(phash_)
+      module[HASH_BITS].KeccakHashUpdate(phash_, data, length)
+      module[HASH_BITS].KeccakHashFinish(phash_)
 
-      hash_module = ffi[HASH_BITS].buffer(hash_.state.A, hash_length)
+      hash_module = ffi[HASH_BITS].buffer(hash_.state.a, hash_length)
       hash_module = hash_module[:]
 
       hash_reference = sha3[HASH_BITS](data).digest()
@@ -135,14 +135,14 @@ class TestSHA3(unittest.TestCase):
       data = os.urandom(length)
       hash_length = HASH_BITS // 8
 
-      phash_ = ffi[HASH_BITS].new('struct KECCAK_HASH_t[1]')
+      phash_ = ffi[HASH_BITS].new('struct keccak_hash_t[1]')
       hash_ = phash_[0]
 
-      module[HASH_BITS].KECCAK_HASH_init(phash_)
-      module[HASH_BITS].KECCAK_HASH_update(phash_, data, length)
-      module[HASH_BITS].KECCAK_HASH_finish(phash_)
+      module[HASH_BITS].KeccakHashInit(phash_)
+      module[HASH_BITS].KeccakHashUpdate(phash_, data, length)
+      module[HASH_BITS].KeccakHashFinish(phash_)
 
-      hash_module = ffi[HASH_BITS].buffer(hash_.state.A, hash_length)
+      hash_module = ffi[HASH_BITS].buffer(hash_.state.a, hash_length)
       hash_module = hash_module[:]
 
       hash_reference = sha3[HASH_BITS](data).digest()
@@ -159,14 +159,14 @@ class TestSHAKE(unittest.TestCase):
       data = b'\x00' * length
       xof_length = HASH_BITS // 8
 
-      pxof = ffi[HASH_BITS].new('struct KECCAK_XOF_t[1]')
+      pxof = ffi[HASH_BITS].new('struct keccak_xof_t[1]')
 
-      module[HASH_BITS].KECCAK_XOF_init(pxof)
-      module[HASH_BITS].KECCAK_XOF_absorb(pxof, data, length)
-      module[HASH_BITS].KECCAK_XOF_finish(pxof)
+      module[HASH_BITS].KeccakXofInit(pxof)
+      module[HASH_BITS].KeccakXofAbsorb(pxof, data, length)
+      module[HASH_BITS].KeccakXofFinish(pxof)
 
       xof_module = b'\x00' * xof_length
-      module[HASH_BITS].KECCAK_XOF_squeeze(pxof, xof_module, xof_length)
+      module[HASH_BITS].KeccakXofSqueeze(pxof, xof_module, xof_length)
 
       xof_reference = shake[HASH_BITS](data).digest(xof_length)
 
@@ -178,14 +178,14 @@ class TestSHAKE(unittest.TestCase):
       data = b'\x00' * length
       xof_length = HASH_BITS // 8
 
-      pxof = ffi[HASH_BITS].new('struct KECCAK_XOF_t[1]')
+      pxof = ffi[HASH_BITS].new('struct keccak_xof_t[1]')
 
-      module[HASH_BITS].KECCAK_XOF_init(pxof)
-      module[HASH_BITS].KECCAK_XOF_absorb(pxof, data, length)
-      module[HASH_BITS].KECCAK_XOF_finish(pxof)
+      module[HASH_BITS].KeccakXofInit(pxof)
+      module[HASH_BITS].KeccakXofAbsorb(pxof, data, length)
+      module[HASH_BITS].KeccakXofFinish(pxof)
 
       xof_module = b'\x00' * xof_length
-      module[HASH_BITS].KECCAK_XOF_squeeze(pxof, xof_module, xof_length)
+      module[HASH_BITS].KeccakXofSqueeze(pxof, xof_module, xof_length)
 
       xof_reference = shake[HASH_BITS](data).digest(xof_length)
 
@@ -197,14 +197,14 @@ class TestSHAKE(unittest.TestCase):
       data = b'\x00' * length
       xof_length = HASH_BITS // 8
 
-      pxof = ffi[HASH_BITS].new('struct KECCAK_XOF_t[1]')
+      pxof = ffi[HASH_BITS].new('struct keccak_xof_t[1]')
 
-      module[HASH_BITS].KECCAK_XOF_init(pxof)
-      module[HASH_BITS].KECCAK_XOF_absorb(pxof, data, length)
-      module[HASH_BITS].KECCAK_XOF_finish(pxof)
+      module[HASH_BITS].KeccakXofInit(pxof)
+      module[HASH_BITS].KeccakXofAbsorb(pxof, data, length)
+      module[HASH_BITS].KeccakXofFinish(pxof)
 
       xof_module = b'\x00' * xof_length
-      module[HASH_BITS].KECCAK_XOF_squeeze(pxof, xof_module, xof_length)
+      module[HASH_BITS].KeccakXofSqueeze(pxof, xof_module, xof_length)
 
       xof_reference = shake[HASH_BITS](data).digest(xof_length)
 
@@ -216,14 +216,14 @@ class TestSHAKE(unittest.TestCase):
       data = os.urandom(length)
       xof_length = HASH_BITS // 8
 
-      pxof = ffi[HASH_BITS].new('struct KECCAK_XOF_t[1]')
+      pxof = ffi[HASH_BITS].new('struct keccak_xof_t[1]')
 
-      module[HASH_BITS].KECCAK_XOF_init(pxof)
-      module[HASH_BITS].KECCAK_XOF_absorb(pxof, data, length)
-      module[HASH_BITS].KECCAK_XOF_finish(pxof)
+      module[HASH_BITS].KeccakXofInit(pxof)
+      module[HASH_BITS].KeccakXofAbsorb(pxof, data, length)
+      module[HASH_BITS].KeccakXofFinish(pxof)
 
       xof_module = b'\x00' * xof_length
-      module[HASH_BITS].KECCAK_XOF_squeeze(pxof, xof_module, xof_length)
+      module[HASH_BITS].KeccakXofSqueeze(pxof, xof_module, xof_length)
 
       xof_reference = shake[HASH_BITS](data).digest(xof_length)
 

@@ -76,26 +76,29 @@ extern "C" {
 
 /* HASH (Based on SHA3) */
 
-typedef struct KECCAK_HASH_t {
-  struct KECCAK_t state;
-} KECCAK_HASH_t;
+struct keccak_hash_t {
+  struct keccak_t state;
+};
 
-void KECCAK_HASH_init(KECCAK_HASH_t *hash);
-void KECCAK_HASH_update(KECCAK_HASH_t *hash, const void *buff, uint16_t num);
-void KECCAK_HASH_finish(KECCAK_HASH_t *hash);
+void KeccakHashInit(struct keccak_hash_t *hash_ptr);
+void KeccakHashUpdate(struct keccak_hash_t *hash_ptr, const void *buff_ptr,
+                      uint16_t num);
+void KeccakHashFinish(struct keccak_hash_t *hash_ptr);
 
 /* XOF (Based on SHAKE) */
 
-typedef struct KECCAK_XOF_t {
-  struct KECCAK_t state;
-} KECCAK_XOF_t;
+struct keccak_xof_t {
+  struct keccak_t state;
+};
 
-void KECCAK_XOF_init(KECCAK_XOF_t *xof);
-void KECCAK_XOF_domain(KECCAK_XOF_t *xof, const void *domain,
-                       uint16_t domain_length);
-void KECCAK_XOF_absorb(KECCAK_XOF_t *xof, const void *buff, uint16_t num);
-void KECCAK_XOF_finish(KECCAK_XOF_t *xof);
-void KECCAK_XOF_squeeze(KECCAK_XOF_t *xof, void *buff, uint16_t num);
+void KeccakXofInit(struct keccak_xof_t *xof_ptr);
+void KeccakXofDomain(struct keccak_xof_t *xof_ptr, const void *domain_ptr,
+                     uint16_t domain_length);
+void KeccakXofAbsorb(struct keccak_xof_t *xof_ptr, const void *buff_ptr,
+                     uint16_t num);
+void KeccakXofFinish(struct keccak_xof_t *xof_ptr);
+void KeccakXofSqueeze(struct keccak_xof_t *xof_ptr, void *buff_ptr,
+                      uint16_t num);
 
 #ifdef __cplusplus
 }

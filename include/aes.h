@@ -33,34 +33,34 @@ extern "C" {
 #define AES_NUM_ROUNDS (AES_KEY_LEN / 4 + 6)
 #define AES_SUBKEYS_LEN (AES_BLOCK_LEN * (AES_NUM_ROUNDS + 1))
 
-void aes_ecb_encrypt(const uint8_t key[AES_KEY_LEN],
-                     const uint8_t plain[AES_BLOCK_LEN],
-                     uint8_t cipher[AES_BLOCK_LEN]);
+void AES_ECBEncrypt(const uint8_t key[AES_KEY_LEN],
+                    const uint8_t plain[AES_BLOCK_LEN],
+                    uint8_t cipher[AES_BLOCK_LEN]);
 
-void aes_ecb_decrypt(const uint8_t key[AES_KEY_LEN],
-                     const uint8_t cipher[AES_BLOCK_LEN],
-                     uint8_t plain[AES_BLOCK_LEN]);
+void AES_ECBDecrypt(const uint8_t key[AES_KEY_LEN],
+                    const uint8_t cipher[AES_BLOCK_LEN],
+                    uint8_t plain[AES_BLOCK_LEN]);
 
-void aes_cbc_encrypt(const uint8_t key[AES_KEY_LEN],
-                     const uint8_t iv[AES_BLOCK_LEN], const uint8_t *plain,
-                     uint32_t length, uint8_t *cipher);
+void AES_CBCEncrypt(const uint8_t key[AES_KEY_LEN],
+                    const uint8_t iv[AES_BLOCK_LEN], const uint8_t *plain_ptr,
+                    uint32_t length, uint8_t *cipher_ptr);
 
-void aes_cbc_decrypt(const uint8_t key[AES_KEY_LEN],
-                     const uint8_t iv[AES_BLOCK_LEN], const uint8_t *cipher,
-                     uint32_t length, uint8_t *plain);
+void AES_CBCDecrypt(const uint8_t key[AES_KEY_LEN],
+                    const uint8_t iv[AES_BLOCK_LEN], const uint8_t *cipher_ptr,
+                    uint32_t length, uint8_t *plain_ptr);
 
-struct aes_hash_state {
+struct aes_hash_state_t {
   uint8_t hash[AES_BLOCK_LEN];
   uint8_t plain[AES_KEY_LEN];
   uint8_t length;
 };
 
-void aes_hash_init(struct aes_hash_state *state);
-void aes_hash_init_iv(struct aes_hash_state *state,
-                      const uint8_t iv[AES_BLOCK_LEN]);
-void aes_hash_update(struct aes_hash_state *state, const uint8_t *plain,
-                     uint32_t length);
-void aes_hash_finish(struct aes_hash_state *state);
+void AESHashInit(struct aes_hash_state_t *state_ptr);
+void AESHashInitIv(struct aes_hash_state_t *state_ptr,
+                   const uint8_t iv[AES_BLOCK_LEN]);
+void AESHashUpdate(struct aes_hash_state_t *state_ptr, const uint8_t *plain_ptr,
+                   uint32_t length);
+void AESHashFinish(struct aes_hash_state_t *state_ptr);
 
 #ifdef __cplusplus
 }
