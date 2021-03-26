@@ -16,8 +16,8 @@
  limitations under the License.
 */
 
-#ifndef __KECCAK__
-#define __KECCAK__
+#ifndef _KECCAK_H_
+#define _KECCAK_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -66,4 +66,4 @@ void KeccakF(struct keccak_t *state_ptr, uint8_t rounds);
 }
 #endif
 
-#endif /* __KECCAK__ */
+#endif /* _KECCAK_H_ */

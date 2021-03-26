@@ -16,8 +16,8 @@
  limitations under the License.
 */
 
-#ifndef __KECCAK_PRNG__
-#define __KECCAK_PRNG__
+#ifndef _KECCAK_PRNG_H_
+#define _KECCAK_PRNG_H_
 
 #include "keccak.h"
 
@@ -53,4 +53,4 @@ extern struct keccak_t Keccak_Prng_Entropy __attribute__((section(".noinit")));
 }
 #endif
 
-#endif /* __KECCAK_PRNG__ */
+#endif /* _KECCAK_PRNG_H_ */

@@ -21,11 +21,11 @@
 
 #ifdef AVR
 #include <avr/pgmspace.h>
+#define PGM_READ_BYTE(x) pgm_read_byte(x)
 #else
 #undef PROGMEM
 #define PROGMEM
-#undef pgm_read_byte
-#define pgm_read_byte(x) *(x)
+#define PGM_READ_BYTE(x) *(x)
 #endif
 
 struct aes_subkey_t {
@@ -92,19 +92,19 @@ PROGMEM const uint8_t AES_Mixcolumn_Gf2p8_Table[8] = {0x00, 0x1b, 0x36, 0x2d,
                                                       0x6c, 0x77, 0x5a, 0x41};
 
 uint8_t AESByteSubTable(uint8_t i) {
-  return pgm_read_byte(&AES_Bytesub_Table[i]);
+  return PGM_READ_BYTE(&AES_Bytesub_Table[i]);
 }
 
 uint8_t AESInvByteSubTable(uint8_t i) {
-  return pgm_read_byte(&AES_Invbytesub_Table[i]);
+  return PGM_READ_BYTE(&AES_Invbytesub_Table[i]);
 }
 
 uint8_t AESRconPoli(uint8_t i) {
-  return pgm_read_byte(&AES_Rcon_Poli_Table[i]);
+  return PGM_READ_BYTE(&AES_Rcon_Poli_Table[i]);
 }
 
 uint8_t AESMixColumnGf2P8(uint8_t i) {
-  return pgm_read_byte(&AES_Mixcolumn_Gf2p8_Table[i]);
+  return PGM_READ_BYTE(&AES_Mixcolumn_Gf2p8_Table[i]);
 }
 
 void AESSubword(uint8_t bytes[4]) {

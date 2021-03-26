@@ -112,28 +112,28 @@ void KeccakF(struct keccak_t *state_ptr, uint8_t rounds) {
 
 #ifdef AVR
 #include <avr/pgmspace.h>
+#define PGM_READ_BYTE(x) pgm_read_byte(x)
 #if (KECCAK_WORD == 1)
-#define pgm_read_KECCAK_WORD(x) pgm_read_byte(x)
+#define PGM_READ_KECCAK_WORD(x) pgm_read_byte(x)
 #elif (KECCAK_WORD == 2)
-#define pgm_read_KECCAK_WORD(x) pgm_read_word(x)
+#define PGM_READ_KECCAK_WORD(x) pgm_read_word(x)
 #elif (KECCAK_WORD == 4)
-#define pgm_read_KECCAK_WORD(x) pgm_read_dword(x)
+#define PGM_READ_KECCAK_WORD(x) pgm_read_dword(x)
 #elif (KECCAK_WORD == 8)
-#define pgm_read_KECCAK_WORD(x) pgm_read_qword(x)
+#define PGM_READ_KECCAK_WORD(x) pgm_read_qword(x)
 #endif
 #else
 #undef PROGMEM
 #define PROGMEM
-#undef pgm_read_byte
-#define pgm_read_byte(x) *(x)
+#define PGM_READ_BYTE(x) *(x)
 #if (KECCAK_WORD == 1)
-#define pgm_read_KECCAK_WORD(x) *(x)
+#define PGM_READ_KECCAK_WORD(x) *(x)
 #elif (KECCAK_WORD == 2)
-#define pgm_read_KECCAK_WORD(x) *(x)
+#define PGM_READ_KECCAK_WORD(x) *(x)
 #elif (KECCAK_WORD == 4)
-#define pgm_read_KECCAK_WORD(x) *(x)
+#define PGM_READ_KECCAK_WORD(x) *(x)
 #elif (KECCAK_WORD == 8)
-#define pgm_read_KECCAK_WORD(x) *(x)
+#define PGM_READ_KECCAK_WORD(x) *(x)
 #endif
 #endif
 
@@ -146,58 +146,58 @@ static uint64_t pgm_read_qword(const void *address) {
 #endif
 
 #if (KECCAK_WORD == 1)
-#define Krcm 0xFF
-#define Krtm 0x07
+#define KRCM 0xFF
+#define KRTM 0x07
 #elif (KECCAK_WORD == 2)
-#define Krcm 0xFFFF
-#define Krtm 0x0F
+#define KRCM 0xFFFF
+#define KRTM 0x0F
 #elif (KECCAK_WORD == 4)
-#define Krcm 0xFFFFFFFF
-#define Krtm 0x1F
+#define KRCM 0xFFFFFFFF
+#define KRTM 0x1F
 #elif (KECCAK_WORD == 8)
-#define Krcm 0xFFFFFFFFFFFFFFFF
-#define Krtm 0x3F
+#define KRCM 0xFFFFFFFFFFFFFFFF
+#define KRTM 0x3F
 #endif
 
 PROGMEM
-static const keccak_uint_t Krc[KECCAK_NR] = {0x0000000000000001 & Krcm,
-                                             0x0000000000008082 & Krcm,
-                                             0x800000000000808A & Krcm,
-                                             0x8000000080008000 & Krcm,
-                                             0x000000000000808B & Krcm,
-                                             0x0000000080000001 & Krcm,
-                                             0x8000000080008081 & Krcm,
-                                             0x8000000000008009 & Krcm,
-                                             0x000000000000008A & Krcm,
-                                             0x0000000000000088 & Krcm,
-                                             0x0000000080008009 & Krcm,
-                                             0x000000008000000A & Krcm,
-                                             0x000000008000808B & Krcm,
-                                             0x800000000000008B & Krcm,
-                                             0x8000000000008089 & Krcm,
-                                             0x8000000000008003 & Krcm,
-                                             0x8000000000008002 & Krcm,
-                                             0x8000000000000080 & Krcm,
+static const keccak_uint_t Krc[KECCAK_NR] = {0x0000000000000001 & KRCM,
+                                             0x0000000000008082 & KRCM,
+                                             0x800000000000808A & KRCM,
+                                             0x8000000080008000 & KRCM,
+                                             0x000000000000808B & KRCM,
+                                             0x0000000080000001 & KRCM,
+                                             0x8000000080008081 & KRCM,
+                                             0x8000000000008009 & KRCM,
+                                             0x000000000000008A & KRCM,
+                                             0x0000000000000088 & KRCM,
+                                             0x0000000080008009 & KRCM,
+                                             0x000000008000000A & KRCM,
+                                             0x000000008000808B & KRCM,
+                                             0x800000000000008B & KRCM,
+                                             0x8000000000008089 & KRCM,
+                                             0x8000000000008003 & KRCM,
+                                             0x8000000000008002 & KRCM,
+                                             0x8000000000000080 & KRCM,
 #if KECCAK_WORD >= 2
-                                             0x000000000000800A & Krcm,
-                                             0x800000008000000A & Krcm,
+                                             0x000000000000800A & KRCM,
+                                             0x800000008000000A & KRCM,
 #endif
 #if KECCAK_WORD >= 4
-                                             0x8000000080008081 & Krcm,
-                                             0x8000000000008080 & Krcm,
+                                             0x8000000080008081 & KRCM,
+                                             0x8000000000008080 & KRCM,
 #endif
 #if KECCAK_WORD >= 8
-                                             0x0000000080000001 & Krcm,
-                                             0x8000000080008008 & Krcm
+                                             0x0000000080000001 & KRCM,
+                                             0x8000000080008008 & KRCM
 #endif
 };
 
 PROGMEM
 static const uint8_t Krho[25] = {
-    0 & Krtm,  1 & Krtm,  62 & Krtm, 28 & Krtm, 27 & Krtm, 36 & Krtm, 44 & Krtm,
-    6 & Krtm,  55 & Krtm, 20 & Krtm, 3 & Krtm,  10 & Krtm, 43 & Krtm, 25 & Krtm,
-    39 & Krtm, 41 & Krtm, 45 & Krtm, 15 & Krtm, 21 & Krtm, 8 & Krtm,  18 & Krtm,
-    2 & Krtm,  61 & Krtm, 56 & Krtm, 14 & Krtm};
+    0 & KRTM,  1 & KRTM,  62 & KRTM, 28 & KRTM, 27 & KRTM, 36 & KRTM, 44 & KRTM,
+    6 & KRTM,  55 & KRTM, 20 & KRTM, 3 & KRTM,  10 & KRTM, 43 & KRTM, 25 & KRTM,
+    39 & KRTM, 41 & KRTM, 45 & KRTM, 15 & KRTM, 21 & KRTM, 8 & KRTM,  18 & KRTM,
+    2 & KRTM,  61 & KRTM, 56 & KRTM, 14 & KRTM};
 
 PROGMEM
 static const uint8_t Kpi[25] = {0,  10, 20, 5, 15, 16, 1,  11, 21, 6, 7,  17, 2,
@@ -273,8 +273,8 @@ static void KeccakFRound(struct keccak_t *state_ptr, uint8_t round) {
 
     for (jt5 = 0; jt5 < 25; jt5 += 5) {
       uint8_t k = jt5 + i;
-      b[pgm_read_byte(&Kpi[k])] =
-          Rot(state_ptr->a[k] ^ d, pgm_read_byte(&Krho[k]));
+      b[PGM_READ_BYTE(&Kpi[k])] =
+          Rot(state_ptr->a[k] ^ d, PGM_READ_BYTE(&Krho[k]));
     }
 
     if (++im1 >= 5)
@@ -286,9 +286,9 @@ static void KeccakFRound(struct keccak_t *state_ptr, uint8_t round) {
   /* Chi */
   for (i = 0; i < 25; ++i) {
     state_ptr->a[i] =
-        b[i] ^ ((~b[pgm_read_byte(&Kiip1[i])]) & b[pgm_read_byte(&Kiip2[i])]);
+        b[i] ^ ((~b[PGM_READ_BYTE(&Kiip1[i])]) & b[PGM_READ_BYTE(&Kiip2[i])]);
   }
 
   /* Iota */
-  state_ptr->a[0] ^= pgm_read_KECCAK_WORD(&Krc[round]);
+  state_ptr->a[0] ^= PGM_READ_KECCAK_WORD(&Krc[round]);
 }

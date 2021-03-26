@@ -55,7 +55,7 @@
 #if defined(KECCAK_PRNG_DEBUG) && KECCAK_PRNG_DEBUG == 1
 struct keccak_t Keccak_Prng_Entropy __attribute__((section(".noinit")));
 #else
-static struct keccak_t keccak_prng_entropy __attribute__((section(".noinit")));
+static struct keccak_t Keccak_Prng_Entropy __attribute__((section(".noinit")));
 #endif
 
 void KeccakPrngSeed(const void *buff_ptr, uint8_t num) {
@@ -66,9 +66,9 @@ void KeccakPrngSeed(const void *buff_ptr, uint8_t num) {
   KeccakFinish(&Keccak_Prng_Entropy, KECCAK_STATE_SIZE, KECCAK_PRNG_NR_START,
                KECCAK_PAD_MULTIRATE);
 #else
-  KeccakAbsorb(&keccak_prng_entropy, KECCAK_STATE_SIZE, KECCAK_PRNG_NR_STEP,
+  KeccakAbsorb(&Keccak_Prng_Entropy, KECCAK_STATE_SIZE, KECCAK_PRNG_NR_STEP,
                buff_ptr, num);
-  KeccakFinish(&keccak_prng_entropy, KECCAK_STATE_SIZE, KECCAK_PRNG_NR_START,
+  KeccakFinish(&Keccak_Prng_Entropy, KECCAK_STATE_SIZE, KECCAK_PRNG_NR_START,
                KECCAK_PAD_MULTIRATE);
 #endif
 }
@@ -78,7 +78,7 @@ void KeccakPrngRandom(void *buff_ptr, uint8_t num) {
   KeccakSqueeze(&Keccak_Prng_Entropy, KECCAK_PRNG_RATE, KECCAK_PRNG_NR_STEP,
                 buff_ptr, num);
 #else
-  KeccakEncrypt(&keccak_prng_entropy, KECCAK_PRNG_RATE, KECCAK_PRNG_NR_STEP,
+  KeccakEncrypt(&Keccak_Prng_Entropy, KECCAK_PRNG_RATE, KECCAK_PRNG_NR_STEP,
                 buff_ptr, num);
 #endif
 }

@@ -16,8 +16,8 @@
  limitations under the License.
 */
 
-#ifndef __KECCAK_HASH__
-#define __KECCAK_HASH__
+#ifndef _KECCAK_HASH_H_
+#define _KECCAK_HASH_H_
 
 #include "keccak.h"
 
@@ -104,4 +104,4 @@ void KeccakXofSqueeze(struct keccak_xof_t *xof_ptr, void *buff_ptr,
 }
 #endif
 
-#endif /* __KECCAK_HASH__ */
+#endif /* _KECCAK_HASH_H_ */

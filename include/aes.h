@@ -16,8 +16,8 @@
  limitations under the License.
 */
 
-#ifndef AES_H_
-#define AES_H_
+#ifndef _AES_H_
+#define _AES_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -66,4 +66,4 @@ void AESHashFinish(struct aes_hash_state_t *state_ptr);
 }
 #endif
 
-#endif /* AES_H_ */
+#endif /* _AES_H_ */

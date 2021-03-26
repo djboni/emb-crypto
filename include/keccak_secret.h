@@ -16,8 +16,8 @@
  limitations under the License.
 */
 
-#ifndef __KECCAK_SECRET__
-#define __KECCAK_SECRET__
+#ifndef _KECCAK_SECRET_H_
+#define _KECCAK_SECRET_H_
 
 /* KECCAK_SECRET (Based on KETJE) */
 
@@ -111,4 +111,4 @@ uint8_t KeccakSecretVerifyD(struct keccak_secret_t *secret_ptr, void *buff_ptr,
 }
 #endif
 
-#endif /* __KECCAK_SECRET__ */
+#endif /* _KECCAK_SECRET_H_ */

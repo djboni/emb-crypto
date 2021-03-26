@@ -16,8 +16,8 @@
  limitations under the License.
 */
 
-#ifndef __SHA1__
-#define __SHA1__
+#ifndef _SHA1_H_
+#define _SHA1_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,4 +41,4 @@ void SHA1BigToLittleEndian(struct sha1_t *state_ptr);
 }
 #endif
 
-#endif /* __SHA1__ */
+#endif /* _SHA1_H_ */

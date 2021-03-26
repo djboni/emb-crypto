@@ -16,8 +16,8 @@
  limitations under the License.
 */
 
-#ifndef __KECCAK_TYPES__
-#define __KECCAK_TYPES__
+#ifndef _KECCAK_TYPES_H_
+#define _KECCAK_TYPES_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,4 +54,4 @@ struct keccak_t {
 }
 #endif
 
-#endif /* __KECCAK_TYPES__ */
+#endif /* _KECCAK_TYPES_H_ */

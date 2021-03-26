@@ -16,8 +16,8 @@
  limitations under the License.
 */
 
-#ifndef __SHA3__
-#define __SHA3__
+#ifndef _SHA3_H_
+#define _SHA3_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -96,4 +96,4 @@ void SHAKE128Squeeze(struct shake_128_t *state_ptr, void *data_ptr,
 }
 #endif
 
-#endif /* __SHA3__ */
+#endif /* _SHA3_H_ */
